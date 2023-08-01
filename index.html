@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <link rel="stylesheet" href="styles.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans:wght@300&display=swap" rel="stylesheet">
+    
+    <title>Gabe Cha</title>
+</head>
+<body>
+    <ul class="navbar">
+        <li class="nav-item"><a href="./">Home</a></li>
+        <li class="nav-item"><a href="portfolio">Portfolio</a></li>
+        <li class="nav-item"><a href="experience">Experience</a></li>
+    </ul>
+
+    <div class="home-content">
+        <div class="home-image">
+            <div class="carousel-container">
+                <div class="carousel-wrapper">
+                    <img class="carousel-image" src="assests/portrait.jpg" alt="Image 1">
+                    <img class="carousel-image" src="assests/image.jpg" alt="Image 2">
+                    <img class="carousel-image" src="assests/face.jpg" alt="Image 3">
+                </div>
+            </div>
+        </div>
+        <div class="home-text">
+            <h1>Gabriel Cha</h1>
+            <p>Hey there 👋. Thanks for visiting.</p>
+            <p>I'm a rising junior <strong>Data Science</strong> major at the <a href="https://ucsd.edu/" target="_blank">University of California, San Diego</a>. Throughout my academics, I've forged a simple principle that fulfills who I am: discover from the unknown, create from the necessity, and question the ordinary. </p>
+            <p>I was born in Maryland, raised in Texas, and now live in California. One of my passions is teaching. I served as an Instructional Assistant for several undergraduate data science courses. Check out my <a href="https://dsc10.com/" target="_blank">favorite course</a> to teach.</p>
+            <a class="linkedin-link" href="https://www.linkedin.com/in/gabrielcha/" target="_blank">LinkedIn</a>
+
+        </div>
+    </div>
+
+    <script>
+        // JavaScript to handle the image scroll
+        const carouselWrapper = document.querySelector('.carousel-wrapper');
+        const carouselImages = document.querySelectorAll('.carousel-image');
+
+        let imageIndex = 0;
+
+        function showImage(index) {
+            carouselWrapper.style.transform = `translateX(-${index * 100}%)`;
+        }
+
+        function nextImage() {
+            imageIndex++;
+            if (imageIndex >= carouselImages.length) {
+                imageIndex = 0;
+            }
+            showImage(imageIndex);
+        }
+
+        // Set an interval to scroll to the next image every 3 seconds
+        setInterval(nextImage, 3000);
+    </script>
+
+    <footer>
+        <p>Built w/ HTML, CSS, and JavaScript</p>
+    </footer>
+    
+</body>
+</html>
