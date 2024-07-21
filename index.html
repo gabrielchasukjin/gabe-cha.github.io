@@ -12,58 +12,115 @@
     <title>Gabe Cha</title>
 </head>
 <body>
-    <ul class="navbar">
-        <li class="nav-item"><a href="./">Home</a></li>
-        <li class="nav-item"><a href="portfolio">Portfolio</a></li>
-        <li class="nav-item"><a href="experience">Experience</a></li>
-    </ul>
 
-    <div class="home-content">
-        <div class="home-image">
-            <div class="carousel-container">
-                <div class="carousel-wrapper">
-                    <img class="carousel-image" src="assests/portrait.jpg" alt="Image 1">
-                    <img class="carousel-image" src="assests/image.jpg" alt="Image 2">
-                    <img class="carousel-image" src="assests/face.jpg" alt="Image 3">
+    <div class="main-content">
+        <h2>about 👋 </h2>
+        <div class="home-text">
+            <p><strong>Hi, I am Gabriel.</strong> I'm a Data Science Undergraduate at <a class="ucsd-link" href="https://ucsd.edu/" target="_blank">UC San Diego</a>. Through my academics and internships, I've forged a simple principle that fulfills who I am: discover from the unknown, create from necessity, and strive to push the boundaries of what's possible in the world of data science.</p>
+            <p>Currently, I am interning at <a class="ucsd-link" href="https://www.edison.com/" target="_blank">Edison</a>, where I build scripts to detect solar production anomalies and develop tools to monitor the efficiency of battery storage systems. Previously, I served multiple quarters as a tutor for <a class="ucsd-link" href="https://dsc80.com/" target="_blank">The Practice and Application of Data Science (DSC 80)</a>, holding over 160 office hours in data wrangling, statistical experimentation, and machine learning. Before that, I interned for <a class="ucsd-link" href="https://e4e.ucsd.edu/" target="_blank">Engineers For Exploration (E4E)</a>, where I improved CNN model generalization for classifying bird species.</p>
+            <p>I'm in love with data and determined to leave my mark in the world of data science.</p>
+            <a class="resume-link" href="assests/gabriel-cha-cv.pdf" target="_blank">Resume</a>
+            <a class="linkedin-link" href="https://www.linkedin.com/in/gabrielcha/" target="_blank">LinkedIn</a> 
+            <a class="email-link" href="mailto:gcha@ucsd.edu">gcha@ucsd.edu</a>
+        </div>
+
+        <br>
+        <br>
+    
+
+        <h2>projects </h2>
+        
+        <div class="portfolio-container">
+
+            <a href="https://www.linkedin.com/in/gabrielcha/overlay/1719714011283/single-media-viewer/?profileId=ACoAADFq2pMBSW481mm8IJwGzN1T_RLzzOcez1w" target="_blank" class="project-link">
+                <div class="project-box">
+                    <img src="assests/ser.png" alt="Project 1">
+                    <div class="project-description">
+                        <div class="project-title">Speech Emotion Recognition</div>
+                        <div class="project-summary">
+                            Recipient of the HDSI scholarship for researching emotion classification in voice recordings. Experimented with and selected the best feature extraction methods, transforming recordings into matrices using Fourier analysis. Performed data augmentations and optimized four models: Decision Tree, SVM, ViT, and CNN.                    </div>
+                    </div>
+                </div>
+            </a>
+
+
+            <div class="project-box">
+                <img src="assests/LM.png" alt="Project 3">
+                <div class="project-description">
+                    <div class="project-title">N-Gram Language Model</div>
+                    <div class="project-summary">
+                        Language model that computes the conditional probability of a given word based on its preceding word, trained and sampled from a web-scraped e-book of The Great Gatsby by using regex to create tokenized words. 
+                    </div>
                 </div>
             </div>
-        </div>
-        <div class="home-text">
-            <h1>Gabriel Cha</h1>
-            <p>Hey there 👋. Thanks for visiting.</p>
-            <p>I'm a rising junior <strong>Data Science</strong> major at the <a href="https://ucsd.edu/" target="_blank">University of California, San Diego</a>. Throughout my academics, I've forged a simple principle that fulfills who I am: discover from the unknown, create from the necessity, and question the ordinary. </p>
-            <p>I was born in Maryland, raised in Texas, and now live in California. One of my passions is teaching. I served as an Instructional Assistant for several undergraduate data science courses. Check out my <a href="https://dsc10.com/" target="_blank">favorite course</a> to teach.</p>
-            <a class="linkedin-link" href="https://www.linkedin.com/in/gabrielcha/" target="_blank">LinkedIn</a>
 
+            <a href="https://gabrielchasukjin.github.io/Power-Outage-Classification-Model/" target="_blank" class="project-link">
+                <div class="project-box">
+                    <img src="assests/outage.png" alt="Project 4">
+                    <div class="project-description">
+                        <div class="project-title">Predictive Outage Cause</div>
+                        <div class="project-summary">
+                            Leveraged sklearn's decision tree to classify severe power grid outage causes, normalizing data and optimizing hyperparameters, achieving 82.7% accuracy.                    </div>
+                    </div>
+                </div>
+            </a>
+
+
+            <a href="https://github.com/gabrielchasukjin/apache_spark_data_exploration/blob/main/Feature%20Eng.%20and%20ML%20Modeling%20in%20Apache%20Spark.ipynb" target="_blank" class="project-link">
+                <div class="project-box">
+                    <img src="assests/spark.png" alt="Project 2">
+                    <div class="project-description">
+                        <div class="project-title">ML Modeling in Spark</div>
+                        <div class="project-summary">
+                            Wrangled 25 GB of data by performing joins and aggregations to train a Word2Vec model in Apache Spark, simultaneously learning the fundamentals of systems for scalable analytics.                    </div>
+                    </div>
+                </div>
+            </a>
+
+            <a href="https://github.com/gabrielchasukjin/codebug" target="_blank" class="project-link">
+                <div class="project-box">
+                    <img src="assests/codebuger_ex.png" alt="Project 5">
+                    <div class="project-description">
+                        <div class="project-title">CoDebug Python Package</div>
+                        <div class="project-summary">
+                            Published a Python library to improve the debugging experience for developers in Jupyter Notebook by using linecache to read error messages and integrating with the OpenAI API to provide troubleshooting suggestions.                    </div>
+                    </div>
+                </div>
+            </a>
+
+            <a href="https://github.com/gabrielchasukjin/acoustic-species-id-intro/tree/submission" target="_blank" class="project-link">
+                <div class="project-box">
+                    <img src="assests/stratified_random_sample.png" alt="Project 6">
+                    <div class="project-description">
+                        <div class="project-title">IoT Stratified Sampling</div>
+                        <div class="project-summary">
+                            Generated a stratified random sample, reducing 4,300 GB of IoT recording to approximately 34.3 GB while ensuring representativeness and efficient data selection.
+                        </div>
+                    </div>
+                </div>
+            </a>
+
+            <a href="https://gabrielchasukjin.github.io/Raccoon-Sightings-on-Campus-Data-React-Web-App/" target="_blank" class="project-link">
+                <div class="project-box">
+                    <img src="assests/racoon.png" alt="Project 7">
+                    <div class="project-description">
+                        <div class="project-title">Racoon Spottings</div>
+                        <div class="project-summary">
+                            Integrated Google Maps API to display campus location and NoSQL Firebase Cloud to track racoon spottings on UC San Diego campus.
+                        </div>
+                    </div>
+                </div>
+            </a>
+
+            <br>
+            <br>
+            <div class="home-text">
+                <p>Since you made it this far, let's connect! My email is <a class="email-link" href="mailto:gcha@ucsd.edu">gcha@ucsd.edu</a>
+            </div>
+
+            
         </div>
     </div>
 
-    <script>
-        // JavaScript to handle the image scroll
-        const carouselWrapper = document.querySelector('.carousel-wrapper');
-        const carouselImages = document.querySelectorAll('.carousel-image');
-
-        let imageIndex = 0;
-
-        function showImage(index) {
-            carouselWrapper.style.transform = `translateX(-${index * 100}%)`;
-        }
-
-        function nextImage() {
-            imageIndex++;
-            if (imageIndex >= carouselImages.length) {
-                imageIndex = 0;
-            }
-            showImage(imageIndex);
-        }
-
-        // Set an interval to scroll to the next image every 3 seconds
-        setInterval(nextImage, 3000);
-    </script>
-
-    <footer>
-        <p>Built w/ HTML, CSS, and JavaScript</p>
-    </footer>
-    
 </body>
 </html>

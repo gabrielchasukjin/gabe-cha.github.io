@@ -2,71 +2,55 @@ body {
     background-color: #ffffff; /* Modern white background color for the web pages */
     margin: 0; /* Remove default margins */
     font-family: 'Noto Sans', sans-serif; /* Use the Noto Sans font */
-}
-
-ul.navbar {
-    font-family: 'Noto Sans', sans-serif; /* Use the Noto Sans font */
-
-    list-style-type: none;
-    margin: 40px 0; /* Adds a margin of 10px at the top and bottom of the navbar */
-    padding: 0;
-    background-color: #ffffff; /* White background color for the navbar */
-    overflow: hidden;
     display: flex;
-    justify-content: center;
-}
-
-li.nav-item a {
-    font-family: 'Noto Sans', sans-serif; /* Use the Noto Sans font */
-    display: block;
-    color: black; /* Black font color */
-    text-align: center;
-    padding: 14px 16px;
-    text-decoration: none;
-}
-
-li.nav-item a:hover {
-    background-color: #e0e0e0; /* Light gray background color on hover */
-}
-
-/* Text below the navbar */
-.navbar-text {
-    font-family: 'Noto Sans', sans-serif; /* Use the Noto Sans font */
-    text-align: center;
-    padding: 20px;
-    font-size: 16px;
-    color: #FC4E1A;
-    line-height: 1.5;
-
-}
-
- /* Specific Home Page styling */
- .home-content {
-    display: flex;
-    justify-content: left;
+    flex-direction: column;
     align-items: center;
-    margin-top: 10px; /* Add some top margin */
+    justify-content: flex-start;
+    min-height: 100vh;
+    text-align: left;
+}
+
+.main-content {
+    max-width: 800px;
+    width: 100%;
+    padding-top: 50px; /* Add more space at the top */
+    padding-left: 20px;
+    padding-right: 20px;
 }
 
 .home-text {
-    flex: 1;
-    margin-right: 200px;
-    padding-top: 30px;
-    padding-left: 50px;
     text-align: left;
-    height: 300px; /* Set a fixed height for the home-text container */
+    margin-bottom: 20px;
 }
 
 .home-text p {
     font-family: 'Noto Sans', sans-serif; /* Use the Noto Sans font */
     font-size: 15px;
+    line-height: 1.6; /* Adjust this value to increase line spacing */
 }
 
-.home-text a {
+.linkedin-link,
+.email-link,
+.resume-link {
     font-family: 'Arial', sans-serif; /* Modern font */
-    color: #FC4E1A; /* Orange color for the link */
+    color: #1e90ff; /* Light blue color for the link */
     text-decoration: none;
     font-weight: bold; /* Bold font weight */
+    margin-right: 15px; /* Add space between the links */
+}
+
+.ucsd-link {
+    font-family: 'Arial', sans-serif; /* Modern font */
+    color: #1e90ff; /* Light blue color for the link */
+    text-decoration: none;
+    font-weight: bold; /* Bold font weight */
+}
+
+
+.ucsd-link:hover,
+.linkedin-link:hover,
+.email-link:hover,
+.resume-link:hover {
     text-decoration: underline; /* Underline the link on hover */
 }
 
@@ -75,123 +59,45 @@ li.nav-item a:hover {
     font-weight: bold; /* Bold font weight for the <strong> tag */
 }
 
-.home-image {
-    margin-left: 250px;
-    height: 300px; /* Set a fixed height for the home-image container */
+.project-link {
+    text-decoration: none;
+    color: inherit;
 }
-
-.home-image img {
-    height: auto;
-    border-radius: 20px; /* Add rounded corners with a 10px radius */
-}
-
-
-/* Carousel container */
-.carousel-container {
-    width: 300px; /* Adjust the width as needed */
-    overflow: hidden;
-    margin: 20px auto;
-    border: 1px solid #ccc;
-    border-radius: 20px;
-}
-
-/* Carousel wrapper to hold the images */
-.carousel-wrapper {
-    border-radius: 20px; /* Add rounded corners with a 10px radius */
-    display: flex;
-    transition: transform 0.5s ease;
-}
-
-/* Individual carousel image */
-.carousel-image {
-    width: 300px; /* Adjust the width as needed */
-    height: auto;
-}
-
-/* Specific Experience Page styling */
-
-.experience-head{
-    font-family: 'Noto Sans', sans-serif; /* Use the Noto Sans font */
-    margin-left: 320px;
-    font-size: 25px;
-
-
-}
-
-.experience-block {
-    padding: 20px;
-    border-radius: 5px;
-    margin: 20px;
-    margin-left: 300px;
-    max-width: 800px; /* Add a maximum width to limit the size of the blocks */
-    width: 90%; /* Adjust the width as needed */
-    line-height: 2;
-}
-
-.experience-title {
-    font-size: 18px;
-    margin-bottom: 5px;
-}
-
-.experience-details {
-    font-size: 16px;
-    color: #555555;
-    margin-bottom: 10px;
-
-}
-
-.experience-description {
-    font-size: 14px;
-    font-family: 'Noto Sans', sans-serif; /* Use the Noto Sans font */
-
-    
-
-}
-
-/* Footer styling */
-footer {
-    background-color: #ffffff; /* Same color as the background */
-    padding: 10px;
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    width: 100%;
-}
-
-footer p {
-    font-size: 14px;
-    margin: 0;
-    color: #333333; /* Dark gray font color for the footer text */
-}
-
 
 .portfolio-container {
     display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
+    flex-direction: column;
     gap: 20px;
-    padding: 20px;
 }
 
+
 .project-box {
-    width: 300px;
     background-color: #ffffff;
-    border: 1px solid #dddddd;
-    border-radius: 10px;
     padding: 20px;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    width: 100%; /* Make the box take the full width available */
+    box-sizing: border-box; /* Ensure padding is included in the width calculation */
+    display: flex; /* Use flexbox for horizontal layout */
+    align-items: flex-start; /* Align items to the start of the flex container */
+    gap: 20px; /* Add space between items */
+    transition: transform 0.3s, background-color 0.3s, box-shadow 0.3s; /* Smooth transition for the effects */
+}
+
+.project-box:hover {
+    background-color: #f0f0f0; /* Change background color on hover */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Apply shadow on hover */
+    transform: scale(1.02); /* Slightly scale up on hover */
 }
 
 .project-box img {
-    max-width: 100%;
+    max-width: 150px; /* Set a fixed width for the image */
     height: auto;
     border-radius: 5px;
+    flex-shrink: 0; /* Prevent the image from shrinking */
 }
 
 .project-description {
-    margin-top: 10px;
     font-family: 'Noto Sans', sans-serif; /* Use the Noto Sans font */
-
+    flex-grow: 1; /* Allow the text container to grow */
 }
 
 .project-title {
@@ -201,8 +107,20 @@ footer p {
 }
 
 .project-summary {
-    font-size: 14px;
+    font-size: 15px; /* Match the font size to the text box */
+    line-height: 1.6; /* Match the line height to the text box */
     font-family: 'Noto Sans', sans-serif; /* Use the Noto Sans font */
-
     color: #555555;
+}
+
+
+
+/* Footer styling */
+footer {
+    background-color: #ffffff; /* Same color as the background */
+    padding: 10px;
+    position: relative;
+    bottom: 0;
+    width: 100%;
+    text-align: center;
 }
