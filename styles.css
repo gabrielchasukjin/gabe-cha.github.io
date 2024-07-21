@@ -46,6 +46,12 @@ body {
     font-weight: bold; /* Bold font weight */
 }
 
+.site {
+    font-family: 'Arial', sans-serif; /* Modern font */
+    font-size: 12px;
+    text-decoration: none;
+}
+
 
 .ucsd-link:hover,
 .linkedin-link:hover,
@@ -123,4 +129,10 @@ footer {
     bottom: 0;
     width: 100%;
     text-align: center;
+}
+
+footer p {
+    font-size: 14px;
+    margin: 0;
+    color: #333333; /* Dark gray font color for the footer text */
 }
