@@ -144,12 +144,3 @@ footer p {
     color: #333333; /* Dark gray font color for the footer text */
 }
 
-.resume-link {
-    color: #0077B5;  /* LinkedIn blue color, you can change this */
-    text-decoration: none;
-    margin-right: 15px;
-}
-
-.resume-link:hover {
-    text-decoration: underline;
-}
