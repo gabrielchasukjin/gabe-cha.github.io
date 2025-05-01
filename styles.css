@@ -44,12 +44,14 @@ body {
 
 .linkedin-link,
 .email-link,
-.resume-link {
+.resume-link,
+.github-link {
     font-family: 'Arial', sans-serif; /* Modern font */
     color: #1e90ff; /* Light blue color for the link */
     text-decoration: none;
     font-weight: bold; /* Bold font weight */
     margin-right: 15px; /* Add space between the links */
+    font-size: 13px; /* Smaller than paragraph text (15px) */
 }
 
 .ucsd-link {
@@ -59,11 +61,11 @@ body {
     font-weight: bold; /* Bold font weight */
 }
 
-
 .ucsd-link:hover,
 .linkedin-link:hover,
 .email-link:hover,
-.resume-link:hover {
+.resume-link:hover,
+.github-link:hover {
     text-decoration: underline; /* Underline the link on hover */
 }
 
@@ -82,7 +84,6 @@ body {
     flex-direction: column;
     gap: 20px;
 }
-
 
 .project-box {
     background-color: #ffffff;
@@ -125,8 +126,6 @@ body {
     font-family: 'Noto Sans', sans-serif; /* Use the Noto Sans font */
     color: #555555;
 }
-
-
 
 /* Footer styling */
 footer {
