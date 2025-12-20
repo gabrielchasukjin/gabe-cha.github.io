@@ -1,145 +1,144 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
 body {
-    background-color: #ffffff; /* Modern white background color for the web pages */
-    margin: 0; /* Remove default margins */
-    font-family: 'Noto Sans', sans-serif; /* Use the Noto Sans font */
+    background-color: #F0EEE6;
+    font-family: 'Source Serif 4', Georgia, serif;
+    min-height: 100vh;
+    color: #2a2a2a;
+}
+
+.main-wrapper {
+    min-height: 100vh;
     display: flex;
     flex-direction: column;
+    justify-content: center;
     align-items: center;
-    justify-content: flex-start;
-    min-height: 100vh;
-    text-align: left;
+    padding: 60px 40px;
+    animation: fadeIn 0.8s ease-out;
 }
 
-.main-content {
-    max-width: 800px;
-    width: 100%;
-    padding-top: 50px; /* Add more space at the top */
-    padding-left: 20px;
-    padding-right: 20px;
-}
-
-/* Media query for mobile view */
-@media (max-width: 768px) {
-    .main-content {
-        padding-left: 15px;
-        padding-right: 15px;
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
     }
 }
 
-.home-text {
-    text-align: left;
-    margin-bottom: 20px;
-}
-
-.site-update {
-    font-family: 'Arial', sans-serif; /* Modern font */
-    font-size: 12px;
-}
-
-.home-text p {
-    font-family: 'Noto Sans', sans-serif; /* Use the Noto Sans font */
-    font-size: 15px;
-    line-height: 1.6; /* Adjust this value to increase line spacing */
-}
-
-.linkedin-link,
-.email-link,
-.resume-link,
-.github-link {
-    font-family: 'Arial', sans-serif; /* Modern font */
-    color: #1e90ff; /* Light blue color for the link */
-    text-decoration: none;
-    font-weight: bold; /* Bold font weight */
-    margin-right: 15px; /* Add space between the links */
-    font-size: 13px; /* Smaller than paragraph text (15px) */
-}
-
-.ucsd-link {
-    font-family: 'Arial', sans-serif; /* Modern font */
-    color: #1e90ff; /* Light blue color for the link */
-    text-decoration: none;
-    font-weight: bold; /* Bold font weight */
-}
-
-.ucsd-link:hover,
-.linkedin-link:hover,
-.email-link:hover,
-.resume-link:hover,
-.github-link:hover {
-    text-decoration: underline; /* Underline the link on hover */
-}
-
-.home-text p strong {
-    font-family: 'Arial', sans-serif; /* Modern font */
-    font-weight: bold; /* Bold font weight for the <strong> tag */
-}
-
-.project-link {
-    text-decoration: none;
-    color: inherit;
-}
-
-.portfolio-container {
+.container {
     display: flex;
-    flex-direction: column;
-    gap: 20px;
-}
-
-.project-box {
-    background-color: #ffffff;
-    padding: 20px;
-    width: 100%; /* Make the box take the full width available */
-    box-sizing: border-box; /* Ensure padding is included in the width calculation */
-    display: flex; /* Use flexbox for horizontal layout */
-    align-items: flex-start; /* Align items to the start of the flex container */
-    gap: 20px; /* Add space between items */
-    transition: transform 0.3s, background-color 0.3s, box-shadow 0.3s; /* Smooth transition for the effects */
-}
-
-.project-box:hover {
-    background-color: #f0f0f0; /* Change background color on hover */
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Apply shadow on hover */
-    transform: scale(1.02); /* Slightly scale up on hover */
-}
-
-.project-box img {
-    max-width: 150px; /* Set a fixed width for the image */
-    height: auto;
-    border-radius: 5px;
-    flex-shrink: 0; /* Prevent the image from shrinking */
-}
-
-.project-description {
-    font-family: 'Noto Sans', sans-serif; /* Use the Noto Sans font */
-    flex-grow: 1; /* Allow the text container to grow */
-}
-
-.project-title {
-    font-size: 18px;
-    font-weight: bold;
-    margin-bottom: 5px;
-}
-
-.project-summary {
-    font-size: 15px; /* Match the font size to the text box */
-    line-height: 1.6; /* Match the line height to the text box */
-    font-family: 'Noto Sans', sans-serif; /* Use the Noto Sans font */
-    color: #555555;
-}
-
-/* Footer styling */
-footer {
-    background-color: #ffffff; /* Same color as the background */
-    padding: 10px;
-    position: relative;
-    bottom: 0;
+    align-items: center;
+    justify-content: center;
+    gap: 100px;
+    max-width: 1200px;
     width: 100%;
+    flex: 1;
+}
+
+.ascii-container {
+    flex-shrink: 0;
+    opacity: 0.9;
+}
+
+#ascii-canvas {
+    display: block;
+}
+
+.content {
+    max-width: 420px;
+}
+
+h1 {
+    font-size: 2rem;
+    font-weight: 400;
+    color: #1a1a1a;
+    margin-bottom: 16px;
+    letter-spacing: -0.01em;
+}
+
+.tagline {
+    font-size: 0.95rem;
+    color: #666;
+    margin-bottom: 28px;
+    line-height: 1.6;
+}
+
+.section {
+    margin-bottom: 24px;
+}
+
+.section p {
+    font-size: 0.92rem;
+    line-height: 1.8;
+    color: #444;
+    margin-bottom: 4px;
+}
+
+.meta {
+    color: #888;
+    font-size: 0.85rem;
+}
+
+a {
+    color: #0d9488;
+    text-decoration: none;
+    transition: color 0.3s ease;
+}
+
+a:hover {
+    color: #0f766e;
+}
+
+footer {
     text-align: center;
+    padding: 40px 20px;
+    font-size: 0.85rem;
+    color: #888;
+    letter-spacing: 0.02em;
 }
 
-footer p {
-    font-size: 14px;
-    margin: 0;
-    color: #333333; /* Dark gray font color for the footer text */
+footer a {
+    color: #0d9488;
+    margin: 0 8px;
+    transition: color 0.3s ease;
 }
 
+footer a:hover {
+    color: #0f766e;
+}
+
+@media (max-width: 900px) {
+    .main-wrapper {
+        padding: 40px 24px;
+    }
+
+    .container {
+        flex-direction: column;
+        gap: 50px;
+    }
+
+    .content {
+        text-align: center;
+    }
+
+    h1 {
+        font-size: 1.75rem;
+    }
+}
+
+@media (max-width: 500px) {
+    h1 {
+        font-size: 1.5rem;
+    }
+
+    .section p {
+        font-size: 0.88rem;
+    }
+}
