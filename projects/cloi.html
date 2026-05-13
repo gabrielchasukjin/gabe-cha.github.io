@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cloi — Gabriel Cha</title>
+    <meta name="description" content="A privacy-first local debugging agent for the terminal. Runs on Ollama or Claude with a CodeBERT + BM25 RAG over your codebase.">
+
+    <meta property="og:type" content="article">
+    <meta property="og:site_name" content="Gabriel Cha">
+    <meta property="og:title" content="Cloi: a local debugging agent for the terminal">
+    <meta property="og:description" content="A privacy-first local debugging agent for the terminal. Runs on Ollama or Claude with a CodeBERT + BM25 RAG over your codebase.">
+    <meta property="og:url" content="https://gabrielcha.com/projects/cloi.html">
+    <meta property="og:image" content="https://gabrielcha.com/assests/portrait.jpg">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Cloi: a local debugging agent for the terminal">
+    <meta name="twitter:description" content="Privacy-first local debugging agent. Ollama or Claude, with a CodeBERT + BM25 RAG.">
+    <meta name="twitter:image" content="https://gabrielcha.com/assests/portrait.jpg">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,400;8..60,500;8..60,600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../styles.css?v=40">
+</head>
+<body>
+
+    <article class="article">
+        <a href="../" class="back-link">← back home</a>
+
+        <header class="article-header">
+            <div class="article-eyebrow">Open-source project · agents</div>
+            <h1>Cloi: a local debugging agent for the terminal</h1>
+            <div class="article-meta">
+                Published May 2025
+                <span class="dot">·</span>
+                <a href="mailto:gsc2133@columbia.edu">gsc2133@columbia.edu</a>
+            </div>
+            <div class="article-authors">
+                Gabriel Cha
+            </div>
+            <div class="article-links">
+                <a href="https://github.com/gabrielchasukjin/cloi" target="_blank">GitHub (<span class="cloi-stars">…</span> ★)</a>
+                <a href="https://www.npmjs.com/package/@cloi-ai/cloi" target="_blank">npm</a>
+                <a href="http://www.cloi-ai.com" target="_blank">cloi-ai.com</a>
+            </div>
+        </header>
+
+        <figure>
+            <video src="../assests/cloi-demo.mp4" controls autoplay muted loop playsinline></video>
+            <figcaption>Cloi in action — running /debug on a failing command.</figcaption>
+        </figure>
+
+        <div class="article-body">
+            <p class="lede">
+                Cloi is a local, context-aware debugging agent that runs entirely in your terminal. It analyzes errors, retrieves the relevant slices of your codebase, and proposes diffs you can accept or reject — without your code ever leaving your machine.
+            </p>
+
+            <h2>The idea</h2>
+            <p>
+                Most "AI debuggers" today are wrappers around hosted models. They're convenient, but they ship your stack traces, source files, and sometimes credentials to a remote inference endpoint. For anyone working on proprietary code, regulated data, or research with private datasets, that's a non-starter. Cloi was built around a single constraint: <em>by default, the model and the code never leave your laptop.</em>
+            </p>
+            <p>
+                The second observation: debugging is overwhelmingly a context problem, not a reasoning problem. Once a capable model has the failing command, the relevant code, and the right slice of the codebase, it usually gets the fix right on the first try. Cloi's job is to <em>assemble that context automatically</em>.
+            </p>
+
+            <h2>How it works</h2>
+            <p>
+                You install it once with <code>npm install -g @cloi-ai/cloi</code> and invoke it inside any project that just errored out:
+            </p>
+<pre><code>cloi</code></pre>
+
+            <p>
+                From there, Cloi exposes a handful of slash commands:
+            </p>
+            <ul>
+                <li><code>/debug</code> — auto-fix the most recent error,</li>
+                <li><code>/index</code> — (re)index the current codebase,</li>
+                <li><code>/model</code> — switch between local Ollama models and Anthropic Claude (Sonnet 4, Opus),</li>
+                <li><code>/logging</code> — enable a zsh hook so cloi can read past command output without re-running anything,</li>
+                <li><code>/help</code> — show the command list.</li>
+            </ul>
+
+            <h3>RAG over your code</h3>
+            <p>
+                When you run <code>/debug</code>, Cloi runs a hybrid retrieval pass over your repo before talking to the model:
+            </p>
+            <ul>
+                <li><strong>Semantic search</strong> with <a href="https://huggingface.co/microsoft/codebert-base" target="_blank">CodeBERT</a> embeddings (≈500 MB), served by a local HTTP service on port 3090.</li>
+                <li><strong>Keyword search</strong> with BM25, to catch things embedding similarity misses (exact identifiers, error strings, etc.).</li>
+                <li><strong>FAISS</strong> as the vector store, so similarity search stays fast as codebases grow.</li>
+            </ul>
+            <p>
+                The retrieval setup is downloaded and installed automatically the first time you run <code>/debug</code> — no separate setup step.
+            </p>
+
+            <h3>Local by default, cloud when you want it</h3>
+            <p>
+                Out of the box, Cloi talks to whatever Ollama models you already have. If you'd rather use a frontier model, dropping <code>ANTHROPIC_API_KEY</code> into <code>~/.zshrc</code> exposes Claude Sonnet 4 and Opus through the same <code>/model</code> picker — no additional config.
+            </p>
+
+            <h3>Terminal logging</h3>
+            <p>
+                The <code>/logging</code> command (zsh only, for now) installs a shell hook that streams terminal output to <code>~/.cloi/terminal_output.log</code> with auto-rotation at 1 MB. The point is to let Cloi reason about errors <em>after</em> they happen — without having to re-run a command that may have side effects.
+            </p>
+
+            <h2>Design decisions worth flagging</h2>
+            <ul>
+                <li><strong>Diffs, not rewrites.</strong> The agent always proposes a patch, never replaces a whole file. Blast radius stays small and reviewable.</li>
+                <li><strong>One model per session.</strong> No router, no agent-of-agents. Whichever model you pick handles every step, and you always know who you're talking to.</li>
+                <li><strong>Shell-native UX.</strong> No web UI, no electron app — if you're in a terminal when the error happens, you stay there.</li>
+            </ul>
+
+            <blockquote>
+                "The best debugger is the one that's already running when the bug happens."
+            </blockquote>
+
+            <h2>Status &amp; what's next</h2>
+            <p>
+                Cloi is in beta and currently most tested on macOS (Big Sur+) with Apple Silicon (M2 / M3). Node 14+ and Python 3.6+ are required. Zsh is the primary supported shell, with fish and bash working in limited testing.
+            </p>
+            <p>
+                The active areas of work are calibration (making <code>/debug</code> silent and confident enough to run unattended), better test-runner integration (so a failing <code>pytest</code> or <code>jest</code> can trigger a fix-and-verify loop), and broader shell support.
+            </p>
+
+            <hr>
+
+            <p>
+                Cloi is GPL-3.0 licensed and accepting contributions at <a href="https://github.com/gabrielchasukjin/cloi" target="_blank">github.com/gabrielchasukjin/cloi</a>. The fastest way to try it is:
+            </p>
+<pre><code>npm install -g @cloi-ai/cloi
+cd your-project-that-just-errored
+cloi</code></pre>
+        </div>
+
+        <div class="article-footer">
+            <a href="../">← back home</a>
+            <span>Gabriel Cha · 2025</span>
+        </div>
+    </article>
+
+    <footer class="site-footer">
+        <a href="https://www.linkedin.com/in/gabrielcha/" target="_blank">linkedin</a>
+        <span class="sep">/</span>
+        <a href="https://github.com/gabrielchasukjin" target="_blank">github</a>
+        <span class="sep">/</span>
+        <a href="../assests/resume.pdf" target="_blank">resume</a>
+        <span class="sep">/</span>
+        <a href="mailto:gsc2133@columbia.edu">email</a>
+    </footer>
+
+    <script>
+        fetch('https://api.github.com/repos/gabrielchasukjin/cloi')
+            .then(res => res.json())
+            .then(data => {
+                document.querySelectorAll('.cloi-stars').forEach(el => el.textContent = data.stargazers_count);
+            })
+            .catch(() => {
+                document.querySelectorAll('.cloi-stars').forEach(el => el.textContent = '395');
+            });
+    </script>
+</body>
+</html>

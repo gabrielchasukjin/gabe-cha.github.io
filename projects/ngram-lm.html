@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>N-Gram Language Model — Gabriel Cha</title>
+    <meta name="description" content="An N-gram language model that estimates the probability of a word from empirical frequencies — no neural networks.">
+
+    <meta property="og:type" content="article">
+    <meta property="og:site_name" content="Gabriel Cha">
+    <meta property="og:title" content="An N-Gram language model from first principles">
+    <meta property="og:description" content="Estimating the probability of a word from empirical frequencies — no neural networks.">
+    <meta property="og:url" content="https://gabrielcha.com/projects/ngram-lm.html">
+    <meta property="og:image" content="https://gabrielcha.com/assests/LM.png">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="An N-Gram language model from first principles">
+    <meta name="twitter:description" content="Estimating word probability from counts alone — no neural networks.">
+    <meta name="twitter:image" content="https://gabrielcha.com/assests/LM.png">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,400;8..60,500;8..60,600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../styles.css?v=40">
+</head>
+<body>
+
+    <article class="article">
+        <a href="../" class="back-link">← back home</a>
+
+        <header class="article-header">
+            <div class="article-eyebrow">Project · classical NLP</div>
+            <h1>An N-Gram language model from first principles</h1>
+            <div class="article-meta">
+                August 2023
+                <span class="dot">·</span>
+                <a href="https://github.com/gabrielchasukjin/LanguageModel" target="_blank">repo</a>
+            </div>
+            <div class="article-authors">Gabriel Cha</div>
+        </header>
+
+        <div class="article-body">
+            <p class="lede">
+                Before neural language models there was a much simpler idea: estimate the probability of a word given the words that came before it, using nothing more than counts from a training corpus. This project rebuilds that idea from scratch.
+            </p>
+
+            <h2>The model</h2>
+            <p>
+                An n-gram model approximates the joint probability of a sentence as the product of conditional probabilities of each token given its <em>n − 1</em> predecessors:
+            </p>
+<pre><code>P(w₁, …, w_T) ≈ ∏ P(w_t | w_{t-n+1}, …, w_{t-1})</code></pre>
+            <p>
+                Maximum-likelihood estimates of those conditional probabilities are just normalized counts from a training corpus. The interesting question — and most of the fun — is what to do when a particular n-gram never appears in training data.
+            </p>
+
+            <figure>
+                <img src="../assests/LM.png" alt="Language model output">
+                <figcaption>Sampled output from the trained n-gram model.</figcaption>
+            </figure>
+
+            <h2>What was interesting</h2>
+            <p>
+                Bigram models trained on a small corpus already produce locally-coherent prose. The failure mode is exactly what theory predicts: every two-word window looks fluent, but the sentence has no plan and no memory. It's a useful reminder of what a modern language model has to be doing implicitly when it generates text that holds together across hundreds of tokens.
+            </p>
+
+            <hr>
+            <p>
+                Built as a study project. Repo: <a href="https://github.com/gabrielchasukjin/LanguageModel" target="_blank">github.com/gabrielchasukjin/LanguageModel</a>.
+            </p>
+        </div>
+
+        <div class="article-footer">
+            <a href="../">← back home</a>
+            <span>Gabriel Cha · 2023</span>
+        </div>
+    </article>
+
+    <footer class="site-footer">
+        <a href="https://www.linkedin.com/in/gabrielcha/" target="_blank">linkedin</a>
+        <span class="sep">/</span>
+        <a href="https://github.com/gabrielchasukjin" target="_blank">github</a>
+        <span class="sep">/</span>
+        <a href="../assests/resume.pdf" target="_blank">resume</a>
+        <span class="sep">/</span>
+        <a href="mailto:gsc2133@columbia.edu">email</a>
+    </footer>
+</body>
+</html>

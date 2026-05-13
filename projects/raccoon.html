@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Raccoon Spottings — Gabriel Cha</title>
+    <meta name="description" content="A Google Maps + Firebase app for crowd-sourced reports of UC San Diego's nocturnal raccoon residents.">
+
+    <meta property="og:type" content="article">
+    <meta property="og:site_name" content="Gabriel Cha">
+    <meta property="og:title" content="Raccoon Spottings: a campus wildlife tracker">
+    <meta property="og:description" content="A Google Maps + Firebase app for crowd-sourced reports of UC San Diego's nocturnal residents.">
+    <meta property="og:url" content="https://gabrielcha.com/projects/raccoon.html">
+    <meta property="og:image" content="https://gabrielcha.com/assests/racoon.png">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Raccoon Spottings: a campus wildlife tracker">
+    <meta name="twitter:description" content="A Google Maps + Firebase app for raccoon sightings at UCSD.">
+    <meta name="twitter:image" content="https://gabrielcha.com/assests/racoon.png">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,400;8..60,500;8..60,600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../styles.css?v=40">
+</head>
+<body>
+
+    <article class="article">
+        <a href="../" class="back-link">← back home</a>
+
+        <header class="article-header">
+            <div class="article-eyebrow">Project · web app</div>
+            <h1>Raccoon Spottings: a campus wildlife tracker</h1>
+            <div class="article-meta">
+                August 2022
+                <span class="dot">·</span>
+                <a href="https://github.com/gabrielchasukjin/Raccoon-Sightings-on-Campus-Data-React-Web-App" target="_blank">repo</a>
+            </div>
+            <div class="article-authors">Gabriel Cha</div>
+        </header>
+
+        <div class="article-body">
+            <p class="lede">
+                A small web app for crowd-sourcing reports of UC San Diego's most prolific nocturnal residents — pinned to a live campus map.
+            </p>
+
+            <h2>What it does</h2>
+            <p>
+                Students drop pins where they spot a raccoon, optionally attaching a photo and a short note. The pins are stored in Firebase Cloud Firestore and rendered onto a Google Maps overlay, with old sightings fading out so the map reflects recent activity rather than every raccoon ever seen on campus.
+            </p>
+
+            <figure>
+                <img src="../assests/racoon.png" alt="Raccoon Spottings interface">
+                <figcaption>A typical Friday night around Geisel Library.</figcaption>
+            </figure>
+
+            <h2>Why it exists</h2>
+            <p>
+                Honestly, because it was funny. But it turned out to be a useful exercise in building a tiny app end-to-end: auth, real-time database writes, map rendering, and a deploy pipeline, all from scratch in a weekend.
+            </p>
+
+            <hr>
+            <p>
+                Built at UC San Diego.
+            </p>
+        </div>
+
+        <div class="article-footer">
+            <a href="../">← back home</a>
+            <span>Gabriel Cha · 2022</span>
+        </div>
+    </article>
+
+    <footer class="site-footer">
+        <a href="https://www.linkedin.com/in/gabrielcha/" target="_blank">linkedin</a>
+        <span class="sep">/</span>
+        <a href="https://github.com/gabrielchasukjin" target="_blank">github</a>
+        <span class="sep">/</span>
+        <a href="../assests/resume.pdf" target="_blank">resume</a>
+        <span class="sep">/</span>
+        <a href="mailto:gsc2133@columbia.edu">email</a>
+    </footer>
+</body>
+</html>

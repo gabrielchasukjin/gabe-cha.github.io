@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Codebug — Gabriel Cha</title>
+    <meta name="description" content="A Python package that explains scary pandas errors in plain language, using GPT-3.5.">
+
+    <meta property="og:type" content="article">
+    <meta property="og:site_name" content="Gabriel Cha">
+    <meta property="og:title" content="Codebug: friendlier error messages for intro CS students">
+    <meta property="og:description" content="A Python package that explains scary pandas errors in plain language, using GPT-3.5.">
+    <meta property="og:url" content="https://gabrielcha.com/projects/codebug.html">
+    <meta property="og:image" content="https://gabrielcha.com/assests/codebuger_ex.png">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Codebug: friendlier error messages for intro CS students">
+    <meta name="twitter:description" content="A Python package that explains scary pandas errors in plain language, using GPT-3.5.">
+    <meta name="twitter:image" content="https://gabrielcha.com/assests/codebuger_ex.png">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,400;8..60,500;8..60,600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../styles.css?v=40">
+</head>
+<body>
+
+    <article class="article">
+        <a href="../" class="back-link">← back home</a>
+
+        <header class="article-header">
+            <div class="article-eyebrow">Project · CS education</div>
+            <h1>Codebug: friendlier error messages for intro CS students</h1>
+            <div class="article-meta">
+                March 2023
+                <span class="dot">·</span>
+                <a href="https://github.com/gabrielchasukjin/codebug" target="_blank">repo</a>
+            </div>
+            <div class="article-authors">Gabriel Cha</div>
+        </header>
+
+        <div class="article-body">
+            <p class="lede">
+                Codebug is a pip-installable Python package that replaces pandas's wall-of-red tracebacks with a short, plain-language explanation of what went wrong — so first-time programmers spend their energy on the bug, not on parsing the error.
+            </p>
+
+            <h2>Why</h2>
+            <p>
+                As a TA, I watched the same scene over and over: a student hit a pandas error, froze when they saw the bold red stack trace, and re-ran the same code without changing it. The vocabulary of Python's tracebacks — <em>NoneType, unhashable, iterable, sliceable</em> — is a real barrier for people who learned the language two weeks ago. The fix wasn't to make errors less informative; it was to translate them.
+            </p>
+
+            <h2>How it works</h2>
+            <p>
+                Codebug intercepts the pandas error message, sends it to <strong>GPT-3.5</strong> with a small instruction prompt, and prints back a digestible explanation plus practical suggestions for fixing the code. The result tries to do three things at once:
+            </p>
+            <ul>
+                <li>Encourage the student to actually read the error.</li>
+                <li>Clear up the underlying Python / pandas misconception (e.g. <em>"this is a Series, not a DataFrame"</em>).</li>
+                <li>Offer concrete next steps instead of just naming the exception class.</li>
+            </ul>
+
+<pre><code>pip install Codebugger</code></pre>
+
+            <figure>
+                <img src="../assests/codebuger_ex.png" alt="Codebug example output">
+                <figcaption>A standard pandas error, before and after Codebug.</figcaption>
+            </figure>
+
+            <h2>Caveats</h2>
+            <p>
+                The package was built in early 2023 against the OpenAI API as it existed then — anyone trying it today will want to bump the model and replace any deprecated endpoints. The hardest design call wasn't technical; it was figuring out how much of the original traceback to keep alongside the plain-language version, since hiding it entirely teaches students to fear errors instead of read them.
+            </p>
+
+            <hr>
+            <p>
+                Built while TA'ing intro data science at UC San Diego. Repo: <a href="https://github.com/gabrielchasukjin/codebug" target="_blank">github.com/gabrielchasukjin/codebug</a>.
+            </p>
+        </div>
+
+        <div class="article-footer">
+            <a href="../">← back home</a>
+            <span>Gabriel Cha · 2023</span>
+        </div>
+    </article>
+
+    <footer class="site-footer">
+        <a href="https://www.linkedin.com/in/gabrielcha/" target="_blank">linkedin</a>
+        <span class="sep">/</span>
+        <a href="https://github.com/gabrielchasukjin" target="_blank">github</a>
+        <span class="sep">/</span>
+        <a href="../assests/resume.pdf" target="_blank">resume</a>
+        <span class="sep">/</span>
+        <a href="mailto:gsc2133@columbia.edu">email</a>
+    </footer>
+</body>
+</html>

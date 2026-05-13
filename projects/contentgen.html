@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ContentGen — Gabriel Cha</title>
+    <meta name="description" content="A JupyterLab extension that generates programming practice questions for data science using LLMs. Accepted at SIGCSE 2026.">
+
+    <meta property="og:type" content="article">
+    <meta property="og:site_name" content="Gabriel Cha">
+    <meta property="og:title" content="ContentGen — SIGCSE '26">
+    <meta property="og:description" content="A JupyterLab extension that generates programming practice questions for data science using LLMs. Accepted at SIGCSE 2026.">
+    <meta property="og:url" content="https://gabrielcha.com/projects/contentgen.html">
+    <meta property="og:image" content="https://gabrielcha.com/assests/portrait.jpg">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="ContentGen — SIGCSE '26">
+    <meta name="twitter:description" content="A JupyterLab extension that generates programming practice questions for data science using LLMs.">
+    <meta name="twitter:image" content="https://gabrielcha.com/assests/portrait.jpg">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,400;8..60,500;8..60,600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../styles.css?v=40">
+</head>
+<body>
+
+    <article class="article">
+        <a href="../" class="back-link">← back home</a>
+
+        <header class="article-header">
+            <div class="article-eyebrow">Paper · CS education + LLMs</div>
+            <h1>Improving LLM-Generated Educational Content: A Case Study on Prototyping, Prompt Engineering, and Evaluating a Tool for Generating Programming Problems for Data Science</h1>
+            <div class="article-meta">
+                SIGCSE TS 2026 &nbsp;·&nbsp; Feb 18–21, 2026 &nbsp;·&nbsp; St. Louis, MO
+                <span class="dot">·</span>
+                <a href="https://doi.org/10.1145/3770762.3772619" target="_blank">DOI</a>
+            </div>
+            <div class="article-authors">
+                Jiaen Yu*, Ylesia Wu*, Gabriel Cha, Ayush Shah, Sam Lau &nbsp;·&nbsp; University of California, San Diego
+                <br>
+                <span style="font-size: 0.85rem;">*co-first authors</span>
+            </div>
+            <div class="article-links">
+                <a href="../assests/sigcse-paper.pdf" target="_blank">PDF</a>
+                <a href="https://dl.acm.org/doi/10.1145/3770762.3772619" target="_blank">ACM Digital Library</a>
+                <a href="#cite">BibTeX</a>
+            </div>
+        </header>
+
+        <div class="article-body">
+            <p class="lede">
+                ContentGen is an open-source JupyterLab extension that generates programming practice questions inside the instructor's own notebook. The paper is an experience report on prototyping the tool, iteratively improving it through evidence-based prompt engineering, and evaluating the generated content against three pedagogical metrics.
+            </p>
+
+            <h2>The problem</h2>
+            <p>
+                Instructors of programming courses constantly need fresh practice questions. LLMs can plausibly write them, but output quality is inconsistent: questions can have subtle errors, hallucinations, or be pedagogically weak. That inconsistency is the bottleneck — it forces instructors to verify and edit every generation, which often costs more than authoring from scratch.
+            </p>
+
+            <h2>The tool</h2>
+            <p>
+                ContentGen lives inside JupyterLab as a sidebar extension. The workflow is:
+            </p>
+            <ol>
+                <li>The instructor selects an existing notebook cell as the "inspiration" for a practice question.</li>
+                <li>They optionally type a short prompt clarifying what they want.</li>
+                <li>ContentGen generates a question and reference answer, displays them in the sidebar, and inserts a new cell below the source.</li>
+                <li>The instructor can apply the suggestion, cancel it, or follow up with refinements.</li>
+            </ol>
+            <p>
+                The whole interaction stays inside the tool they already use to build course materials — no separate web app, no copy-pasting between contexts.
+            </p>
+
+            <h3>Three design goals</h3>
+            <ul>
+                <li><strong>D1 — In-workflow:</strong> live where the instructor already works (JupyterLab).</li>
+                <li><strong>D2 — Automatic context discovery:</strong> the tool should figure out what context to send the LLM, not force the instructor to assemble it.</li>
+                <li><strong>D3 — Effective for instruction:</strong> generated questions should be <em>correct</em> (solution code runs), have <em>contextual fit</em> (use the lecture's datasets and idioms), and be <em>coherent</em> (actually assess the right topic).</li>
+            </ul>
+
+            <h2>Evaluation</h2>
+            <p>
+                We open-sourced a dataset of <strong>91 test cases</strong> drawn from real course materials at UC San Diego and used three binary metrics tracking D3: Correctness, Contextual Fit, and Coherence.
+            </p>
+            <p>
+                Three prompting strategies were compared:
+            </p>
+            <ul>
+                <li><strong>Baseline</strong> — generic instructions plus the entire notebook as context.</li>
+                <li><strong>Detailed</strong> — step-by-step instructions with variable information.</li>
+                <li><strong>Structured</strong> — detailed instructions plus an automatically generated summary of the lecture content, organized by pedagogical topic.</li>
+            </ul>
+            <p>
+                The Structured prompt substantially improved generated-question quality across all three metrics relative to the Baseline. A usability study with <strong>six data science instructors</strong> further showed the final prototype was perceived as useful and effective.
+            </p>
+
+            <h2>My role</h2>
+            <p>
+                I contributed to system implementation and evaluation as a co-author alongside Jiaen Yu and Ylesia Wu (co-first authors), Ayush Shah, and Sam Lau.
+            </p>
+
+            <h2 id="cite">Citation</h2>
+            <pre><code>@inproceedings{yu2026contentgen,
+  author    = {Yu, Jiaen and Wu, Ylesia and Cha, Gabriel and Shah, Ayush and Lau, Sam},
+  title     = {Improving LLM-Generated Educational Content: A Case Study on
+               Prototyping, Prompt Engineering, and Evaluating a Tool for
+               Generating Programming Problems for Data Science},
+  booktitle = {Proceedings of the 57th ACM Technical Symposium on
+               Computer Science Education V.1 (SIGCSE TS 2026)},
+  year      = {2026},
+  publisher = {ACM},
+  address   = {New York, NY, USA},
+  pages     = {7},
+  doi       = {10.1145/3770762.3772619}
+}</code></pre>
+
+            <hr>
+
+            <p>
+                Paper: <a href="../assests/sigcse-paper.pdf" target="_blank">PDF</a> · <a href="https://doi.org/10.1145/3770762.3772619" target="_blank">DOI 10.1145/3770762.3772619</a>. Released under CC BY 4.0.
+            </p>
+        </div>
+
+        <div class="article-footer">
+            <a href="../">← back home</a>
+            <span>2026 · CC BY 4.0</span>
+        </div>
+    </article>
+
+    <footer class="site-footer">
+        <a href="https://www.linkedin.com/in/gabrielcha/" target="_blank">linkedin</a>
+        <span class="sep">/</span>
+        <a href="https://github.com/gabrielchasukjin" target="_blank">github</a>
+        <span class="sep">/</span>
+        <a href="../assests/resume.pdf" target="_blank">resume</a>
+        <span class="sep">/</span>
+        <a href="mailto:gsc2133@columbia.edu">email</a>
+    </footer>
+</body>
+</html>

@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Predictive Outage Cause — Gabriel Cha</title>
+    <meta name="description" content="A multi-class classifier predicting the cause of severe US power outages from DOE data.">
+
+    <meta property="og:type" content="article">
+    <meta property="og:site_name" content="Gabriel Cha">
+    <meta property="og:title" content="Predictive modeling of severe power outage causes">
+    <meta property="og:description" content="A multi-class classifier predicting the cause of severe US power outages from DOE data.">
+    <meta property="og:url" content="https://gabrielcha.com/projects/outage.html">
+    <meta property="og:image" content="https://gabrielcha.com/assests/outage.png">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Predictive modeling of severe power outage causes">
+    <meta name="twitter:description" content="Multi-class classifier on DOE outage data.">
+    <meta name="twitter:image" content="https://gabrielcha.com/assests/outage.png">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,400;8..60,500;8..60,600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../styles.css?v=40">
+</head>
+<body>
+
+    <article class="article">
+        <a href="../" class="back-link">← back home</a>
+
+        <header class="article-header">
+            <div class="article-eyebrow">Project · applied ML</div>
+            <h1>Predictive modeling of severe power outage causes</h1>
+            <div class="article-meta">
+                March 2023
+                <span class="dot">·</span>
+                <a href="https://github.com/gabrielchasukjin/Power-Outage-Classification-Model" target="_blank">repo</a>
+            </div>
+            <div class="article-authors">Gabriel Cha</div>
+        </header>
+
+        <div class="article-body">
+            <p class="lede">
+                A multi-class classifier that predicts the underlying cause of a severe U.S. power outage — severe weather, intentional attack, equipment failure, fuel supply emergency, and so on — from event metadata. The motivation is operational: if repair crews know the likely cause before they arrive on scene, they can prepare for the right kind of damage.
+            </p>
+
+            <h2>Data</h2>
+            <p>
+                The dataset comes from the U.S. Department of Energy's Office of Electricity Delivery and Energy Reliability and the U.S. Energy Information Administration — 1,534 outage events. I narrowed the original 55 columns down to the 6 (+1 engineered) that matter for cause prediction:
+            </p>
+            <ul>
+                <li><code>CAUSE.CATEGORY</code> — the response variable (multiclass).</li>
+                <li><code>CLIMATE.REGION</code> — outage location's climate region.</li>
+                <li><code>ANOMALY.LEVEL</code> — Oceanic Niño Index (ONI) anomaly tied to El Niño / La Niña.</li>
+                <li><code>OUTAGE.DURATION</code> — duration in minutes.</li>
+                <li><code>CUSTOMERS.AFFECTED</code> — number of affected customers.</li>
+                <li><code>POSTAL.CODE</code> — state.</li>
+                <li><code>CLIMATE.CATEGORY</code> — warm / normal / cold relative to ONI.</li>
+            </ul>
+
+            <h2>Cleaning</h2>
+            <p>
+                Two of the columns had non-trivial missingness:
+            </p>
+            <ul>
+                <li><code>OUTAGE.DURATION</code> — missingness was statistically dependent on <code>CAUSE.CATEGORY</code> (p ≈ 0.002), so I imputed with the per-cause mean rather than the global mean.</li>
+                <li><code>CUSTOMERS.AFFECTED</code> — same dependency pattern (p ≈ 0), same per-cause imputation.</li>
+                <li><code>ANOMALY.LEVEL</code> — 9 missing rows with no detectable dependency on cause or region; dropped.</li>
+            </ul>
+            <p>
+                The "missingness depends on the target" pattern was important. Naive imputation (global mean) would have leaked information from one class into another and made the validation accuracy look better than it actually was.
+            </p>
+
+            <h2>Modeling</h2>
+            <p>
+                I evaluated with <strong>accuracy</strong> (rather than F1) since this is a multiclass classification problem with no specific class to favor.
+            </p>
+            <p>
+                A baseline decision tree got me close, and grid search over <code>max_depth</code>, <code>min_samples_split</code>, and the splitting criterion via 5-fold cross-validation pushed validation accuracy up by 2.4 points. The tuned model reached <strong>82.7% accuracy</strong> on the held-out test set.
+            </p>
+
+            <figure>
+                <img src="../assests/outage.png" alt="Outage analysis">
+                <figcaption>Tuned decision tree on the held-out test set.</figcaption>
+            </figure>
+
+            <hr>
+            <p>
+                Built as part of a UC San Diego data-science methods course. Repo: <a href="https://github.com/gabrielchasukjin/Power-Outage-Classification-Model" target="_blank">github.com/gabrielchasukjin/Power-Outage-Classification-Model</a>.
+            </p>
+        </div>
+
+        <div class="article-footer">
+            <a href="../">← back home</a>
+            <span>Gabriel Cha · 2023</span>
+        </div>
+    </article>
+
+    <footer class="site-footer">
+        <a href="https://www.linkedin.com/in/gabrielcha/" target="_blank">linkedin</a>
+        <span class="sep">/</span>
+        <a href="https://github.com/gabrielchasukjin" target="_blank">github</a>
+        <span class="sep">/</span>
+        <a href="../assests/resume.pdf" target="_blank">resume</a>
+        <span class="sep">/</span>
+        <a href="mailto:gsc2133@columbia.edu">email</a>
+    </footer>
+</body>
+</html>

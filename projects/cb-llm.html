@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Concept Bottleneck LLM GUI — Gabriel Cha</title>
+    <meta name="description" content="A React + Flask GUI for inspecting and editing concept activations inside CB-LLMs (Weng et al., ICML 2024 MI Workshop).">
+
+    <meta property="og:type" content="article">
+    <meta property="og:site_name" content="Gabriel Cha">
+    <meta property="og:title" content="A GUI for Concept Bottleneck LLMs">
+    <meta property="og:description" content="A React + Flask GUI for inspecting and editing concept activations inside CB-LLMs (Weng et al., ICML 2024 MI Workshop).">
+    <meta property="og:url" content="https://gabrielcha.com/projects/cb-llm.html">
+    <meta property="og:image" content="https://gabrielcha.com/assests/cbllm.png">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="A GUI for Concept Bottleneck LLMs">
+    <meta name="twitter:description" content="Inspect and edit concept activations inside CB-LLMs.">
+    <meta name="twitter:image" content="https://gabrielcha.com/assests/cbllm.png">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,400;8..60,500;8..60,600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../styles.css?v=40">
+</head>
+<body>
+
+    <article class="article">
+        <a href="../" class="back-link">← back home</a>
+
+        <header class="article-header">
+            <div class="article-eyebrow">Research project · LLM interpretability</div>
+            <h1>A GUI for Concept Bottleneck LLMs</h1>
+            <div class="article-meta">
+                November 2024
+                <span class="dot">·</span>
+                Building on Weng et al., ICML 2024 MI Workshop
+            </div>
+            <div class="article-authors">
+                Gabriel Cha and collaborators &nbsp;·&nbsp; Advised by <a href="https://lilywenglab.github.io/" target="_blank">Prof. Lily Weng (UCSD)</a>
+            </div>
+            <div class="article-links">
+                <a href="https://github.com/gabrielchasukjin/ConceptBottleneck-GUI-Experiment" target="_blank">GitHub</a>
+                <a href="https://arxiv.org/abs/2407.04307" target="_blank">CB-LLM paper</a>
+            </div>
+        </header>
+
+        <div class="article-body">
+            <p class="lede">
+                Concept Bottleneck Large Language Models (CB-LLMs) put a layer of human-readable <em>concepts</em> between the encoder and the classifier — so the model's decision can be inspected, edited, and unlearned in concept space. We built a GUI to make that capability usable by people who aren't fluent in PyTorch.
+            </p>
+
+            <figure>
+                <img src="../assests/cbllm.png" alt="CB-LLM framework">
+                <figcaption>The CB-LLM framework — concepts mediate between the LLM and the prediction head, exposing interpretable controls.</figcaption>
+            </figure>
+
+            <h2>Background</h2>
+            <p>
+                In <a href="https://arxiv.org/abs/2407.04307" target="_blank">Crafting Large Language Models for Enhanced Interpretability</a> (Weng et al., ICML 2024 MI Workshop), the authors propose injecting a <strong>Concept Bottleneck Layer (CBL)</strong> into a pretrained LLM. Instead of mapping straight from contextual embeddings to a final prediction, the model first projects through an intermediate space whose dimensions correspond to interpretable concepts. The bottleneck is supervised so each dimension carries a stable, named meaning — letting users see <em>which</em> concepts a prediction relied on, and intervene if any of them are wrong.
+            </p>
+
+            <h2>What we built</h2>
+            <p>
+                A web GUI on top of CB-LLM that lets a non-ML user:
+            </p>
+            <ul>
+                <li>visualize per-token <strong>concept activations</strong> for an input,</li>
+                <li><strong>adjust</strong> concept weights in real time and re-run the prediction,</li>
+                <li><strong>unlearn</strong> concepts the user flags as biased or undesired,</li>
+                <li>swap the underlying dataset (currently defaults to SST-2 via SetFit) and re-train.</li>
+            </ul>
+            <p>
+                The frontend is a React app (<code>app.js</code>); the backend is a Flask service (<code>app.py</code>) that wraps the CB-LLM training pipeline — concept-label extraction, CBL training with automatic concept scoring (ACS), and full-LLM fine-tuning on top of a RoBERTa backbone.
+            </p>
+
+            <h2>Why this matters</h2>
+            <p>
+                Interpretability methods often produce explanations that look compelling but can't be acted on. CB-LLM is unusual in that the explanation <em>is</em> the intervention surface — once you can see concept activations, you can also turn them off. A GUI is what closes the loop: it makes the "edit the concept and re-predict" workflow available to the people who care about model behavior (educators, auditors, domain experts) but who shouldn't have to write training scripts to participate.
+            </p>
+
+            <h2>What's next</h2>
+            <p>
+                The current MVP is bottlenecked on (a) concept-label quality — extraction from datasets is still noisy — and (b) latency, since every adjustment re-runs the full forward pass. The interesting follow-ups are using better concept-scoring methods and caching activations so edits feel instant.
+            </p>
+
+            <hr>
+            <p>
+                Repo: <a href="https://github.com/gabrielchasukjin/ConceptBottleneck-GUI-Experiment" target="_blank">github.com/gabrielchasukjin/ConceptBottleneck-GUI-Experiment</a>.
+            </p>
+        </div>
+
+        <div class="article-footer">
+            <a href="../">← back home</a>
+            <span>Gabriel Cha · 2024</span>
+        </div>
+    </article>
+
+    <footer class="site-footer">
+        <a href="https://www.linkedin.com/in/gabrielcha/" target="_blank">linkedin</a>
+        <span class="sep">/</span>
+        <a href="https://github.com/gabrielchasukjin" target="_blank">github</a>
+        <span class="sep">/</span>
+        <a href="../assests/resume.pdf" target="_blank">resume</a>
+        <span class="sep">/</span>
+        <a href="mailto:gsc2133@columbia.edu">email</a>
+    </footer>
+</body>
+</html>

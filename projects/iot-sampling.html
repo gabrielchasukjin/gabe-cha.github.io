@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IoT Stratified Sampling — Gabriel Cha</title>
+    <meta name="description" content="Reducing 4,300 GB of Peruvian Amazon bioacoustic recordings to a 34 GB representative sample for CNN training.">
+
+    <meta property="og:type" content="article">
+    <meta property="og:site_name" content="Gabriel Cha">
+    <meta property="og:title" content="Stratified sampling for large-scale bioacoustic IoT data">
+    <meta property="og:description" content="Reducing 4,300 GB of Peruvian Amazon bioacoustic recordings to a 34 GB representative sample for CNN training.">
+    <meta property="og:url" content="https://gabrielcha.com/projects/iot-sampling.html">
+    <meta property="og:image" content="https://gabrielcha.com/assests/stratified_random_sample.png">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Stratified sampling for large-scale bioacoustic IoT data">
+    <meta name="twitter:description" content="4,300 GB → 34 GB representative subset for CNN training.">
+    <meta name="twitter:image" content="https://gabrielcha.com/assests/stratified_random_sample.png">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,400;8..60,500;8..60,600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../styles.css?v=40">
+</head>
+<body>
+
+    <article class="article">
+        <a href="../" class="back-link">← back home</a>
+
+        <header class="article-header">
+            <div class="article-eyebrow">Project · data engineering + bioacoustics</div>
+            <h1>Stratified sampling for large-scale bioacoustic IoT data</h1>
+            <div class="article-meta">
+                May 2023 — present
+                <span class="dot">·</span>
+                Engineers for Exploration, UC San Diego
+            </div>
+            <div class="article-authors">
+                Gabriel Cha
+            </div>
+        </header>
+
+        <div class="article-body">
+            <p class="lede">
+                A 4,300 GB corpus of Peruvian Amazon acoustic recordings, reduced to a 34.3 GB representative sample for downstream CNN training — without losing coverage of the species the project exists to detect.
+            </p>
+
+            <h2>Context</h2>
+            <p>
+                Engineers for Exploration deploys IoT recorders across remote regions of the Peruvian Amazon to monitor biodiversity through sound. The recorders run continuously, producing audio at a rate that quickly outpaces both storage budgets and any reasonable training pipeline. Naive subsampling — say, keeping every <em>n</em>th minute — risks throwing away exactly the rare-species calls the project exists to detect.
+            </p>
+
+            <h2>What I built</h2>
+            <p>
+                I used Pandas to run stratified random sampling over the recording corpus, reducing it from ~4,300 GB to ~34.3 GB while preserving representativeness across the dimensions the downstream models care about. A big chunk of the work was the unglamorous data-hygiene step — reconciling timestamp drift, duplicate uploads, and partial files — before any sampling could be trusted.
+            </p>
+            <p>
+                Separately, I applied data augmentation (background-noise injection, pitch shifts) to the sampled corpus to improve the generalization of the CNN ensembles tracking species presence.
+            </p>
+
+            <figure>
+                <img src="../assests/stratified_random_sample.png" alt="Stratified sampling result">
+                <figcaption>Distribution of retained recordings after stratified sampling.</figcaption>
+            </figure>
+
+            <h2>Why this matters</h2>
+            <p>
+                Biodiversity monitoring at this scale lives or dies by the long tail. Most recordings are silence, wind, or common species; the analytically interesting signal is in calls that appear in a fraction of a percent of the audio. Any sampling strategy that doesn't actively defend the tail will quietly delete the science you're trying to do. Stratification is the simplest defense, and it works well enough that it freed downstream training to run on a laptop instead of a workstation.
+            </p>
+
+            <hr>
+            <p>
+                Done as part of UC San Diego's <a href="https://e4e.ucsd.edu/" target="_blank">Engineers for Exploration</a> program.
+            </p>
+        </div>
+
+        <div class="article-footer">
+            <a href="../">← back home</a>
+            <span>Gabriel Cha · 2023</span>
+        </div>
+    </article>
+
+    <footer class="site-footer">
+        <a href="https://www.linkedin.com/in/gabrielcha/" target="_blank">linkedin</a>
+        <span class="sep">/</span>
+        <a href="https://github.com/gabrielchasukjin" target="_blank">github</a>
+        <span class="sep">/</span>
+        <a href="../assests/resume.pdf" target="_blank">resume</a>
+        <span class="sep">/</span>
+        <a href="mailto:gsc2133@columbia.edu">email</a>
+    </footer>
+</body>
+</html>

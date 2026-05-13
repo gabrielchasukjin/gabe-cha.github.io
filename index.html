@@ -4,6 +4,19 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Gabriel Cha</title>
+    <meta name="description" content="ML engineer and data scientist — fine-tuning LLMs and building agentic harnesses. Studying data science at Columbia.">
+
+    <meta property="og:type" content="website">
+    <meta property="og:site_name" content="Gabriel Cha">
+    <meta property="og:title" content="Gabriel Cha">
+    <meta property="og:description" content="ML engineer and data scientist — fine-tuning LLMs and building agentic harnesses. Studying data science at Columbia.">
+    <meta property="og:url" content="https://gabrielcha.com/">
+    <meta property="og:image" content="https://gabrielcha.com/assests/portrait.jpg">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Gabriel Cha">
+    <meta name="twitter:description" content="ML engineer and data scientist — fine-tuning LLMs and building agentic harnesses.">
+    <meta name="twitter:image" content="https://gabrielcha.com/assests/portrait.jpg">
+
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-0JP39JP51D"></script>
     <script>
         window.dataLayer = window.dataLayer || [];
@@ -13,47 +26,131 @@
     </script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,400;8..60,500;8..60,600&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,400;8..60,500;8..60,600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css?v=40">
 </head>
 <body>
+
+    <a href="about.html" class="about-link">about me →</a>
+
     <div class="main-wrapper">
         <div class="container">
-            <div class="ascii-container">
-                <canvas id="ascii-canvas"></canvas>
+            <div class="hero-portrait">
+                <img src="assests/hero.jpg" alt="Gabriel Cha — portrait at the beach">
             </div>
             <div class="content">
                 <h1>Gabriel Cha</h1>
 
-                <p class="bio tagline">ml engineer, data scientist, fine-tuning llms and building agentic harnesses</p>
+                <p class="bio">i like to think, communicate, and share my work and build cool things along the way.</p>
 
-                <p class="bio">currently studying data science at <a href="https://www.engineering.columbia.edu/" target="_blank">columbia</a></p>
+                <p class="bio">agentic harnesses that can reason, search the web, and synthesize information fascinate me. so does fine-tuning llms on a100 gpus to push quality on narrow tasks.</p>
 
-                <p class="bio">incoming ml engineering intern at <a href="https://www.honeywell.com/" target="_blank">honeywell</a> this summer</p>
-
-                <p class="bio">previously interned at <a href="https://rootaccess.ai/" target="_blank">root access</a> and <a href="https://www.edison.com/" target="_blank">edison</a></p>
-
-                <p class="bio">projects: <a href="https://github.com/gabrielchasukjin/cloi" target="_blank">cloi</a> (<span id="star-count">...</span> stars) and <a href="assests/sigcse-paper.pdf" target="_blank">contentgen</a> (sigcse '26)</p>
+                <div class="affiliations">
+                    <a class="affiliation" href="https://www.columbia.edu/" target="_blank" aria-label="Columbia University — Master's">
+                        <img src="assests/columbia-logo.jpg" alt="Columbia University">
+                        <span class="affiliation-meta">M.S. Data Science, Columbia</span>
+                    </a>
+                    <a class="affiliation" href="https://ucsd.edu/" target="_blank" aria-label="UC San Diego — Bachelor's">
+                        <img src="assests/ucsd-logo.jpg" alt="UC San Diego">
+                        <span class="affiliation-meta">B.S. Data Science, UC San Diego</span>
+                    </a>
+                </div>
             </div>
         </div>
 
-        <footer>
-            <a href="https://www.linkedin.com/in/gabrielcha/" target="_blank">linkedin</a> / 
-            <a href="https://github.com/gabrielchasukjin" target="_blank">github</a> / 
-            <a href="assests/resume.pdf" target="_blank">resume</a> / 
+        <section class="work-section">
+            <h2>Paper</h2>
+            <ul class="work-grid">
+                <li class="work-card paper-card">
+                    <a href="projects/contentgen.html" class="work-card-image" aria-hidden="true">
+                        <img src="assests/contentgen-hero.png" alt="ContentGen — JupyterLab extension generating a practice question">
+                    </a>
+                    <div class="work-card-body">
+                        <div class="paper-venue">Accepted to ACM SIGCSE 2026</div>
+                        <div class="work-card-title"><a href="projects/contentgen.html">ContentGen: Improving LLM-Generated Educational Content for Data Science</a></div>
+                        <div class="paper-authors">Jiaen Yu*, Ylesia Wu*, Gabriel Cha, Ayush Shah, Sam Lau &nbsp;·&nbsp; UC San Diego</div>
+                        <div class="work-card-blurb">An experience report on prototyping a JupyterLab extension that generates programming practice questions inside the instructor's notebook — evaluated through evidence-based prompt engineering and a usability study with six data science instructors.</div>
+                        <div class="card-links">
+                            <a href="assests/sigcse-paper.pdf" target="_blank">pdf</a>
+                            <a href="https://dl.acm.org/doi/10.1145/3770762.3772619" target="_blank">acm digital library</a>
+                        </div>
+                    </div>
+                </li>
+            </ul>
+        </section>
+
+        <section class="work-section work-section-next">
+            <h2>Selected Works</h2>
+            <ul class="work-grid">
+                <li class="work-card">
+                    <a href="projects/cloi.html" class="work-card-image" aria-hidden="true">
+                        <video src="assests/cloi-demo.mp4" poster="assests/cloi-hero.png" autoplay muted loop playsinline preload="metadata"></video>
+                    </a>
+                    <div class="work-card-body">
+                        <div class="work-card-meta">
+                            <span class="work-card-date">May 2025</span>
+                        </div>
+                        <div class="work-card-title"><a href="projects/cloi.html">Cloi: a local debugging agent for the terminal</a></div>
+                        <div class="work-card-blurb">An open-source CLI with a local LLM harness — runs on Ollama or Claude, retrieves relevant code via a CodeBERT + BM25 RAG, and proposes diffs for failing commands. <span id="star-count-inline">390</span>+ stars on GitHub.</div>
+                        <div class="card-links">
+                            <a href="https://github.com/gabrielchasukjin/cloi" target="_blank">github</a>
+                            <a href="projects/cloi.html">writeup</a>
+                        </div>
+                    </div>
+                </li>
+                <li class="work-card">
+                    <a href="projects/ser.html" class="work-card-image" aria-hidden="true">
+                        <img src="assests/ser.png" alt="Speech emotion recognition pipeline">
+                    </a>
+                    <div class="work-card-body">
+                        <div class="work-card-meta">
+                            <span class="work-card-date">Dec 2024</span>
+                        </div>
+                        <div class="work-card-title"><a href="projects/ser.html">Speech emotion recognition with CNNs, SVMs, and ViTs</a></div>
+                        <div class="work-card-blurb">Awarded UCSD's $6,500 HDSI Undergraduate Research Scholarship to lead this work — 12,000 clips across RAVDESS, TESS, CREMA-D, and SAVEE, reaching 86% test accuracy with a CNN.</div>
+                    </div>
+                </li>
+                <li class="work-card">
+                    <a href="projects/ngram-lm.html" class="work-card-image" aria-hidden="true">
+                        <img src="assests/LM.png" alt="N-gram language model output">
+                    </a>
+                    <div class="work-card-body">
+                        <div class="work-card-meta">
+                            <span class="work-card-date">Aug 2023</span>
+                        </div>
+                        <div class="work-card-title"><a href="projects/ngram-lm.html">An N-Gram language model from first principles</a></div>
+                        <div class="work-card-blurb">Estimating sequence likelihoods from word counts and smoothing — no neural networks.</div>
+                    </div>
+                </li>
+            </ul>
+        </section>
+
+        <footer class="site-footer">
+            <a href="https://www.linkedin.com/in/gabrielcha/" target="_blank">linkedin</a>
+            <span class="sep">/</span>
+            <a href="https://github.com/gabrielchasukjin" target="_blank">github</a>
+            <span class="sep">/</span>
+            <a href="assests/resume.pdf" target="_blank">resume</a>
+            <span class="sep">/</span>
             <a href="mailto:gsc2133@columbia.edu">email</a>
         </footer>
     </div>
 
-    <script src="ascii.js"></script>
     <script>
         fetch('https://api.github.com/repos/gabrielchasukjin/cloi')
             .then(res => res.json())
             .then(data => {
-                document.getElementById('star-count').textContent = data.stargazers_count;
+                const n = data.stargazers_count;
+                const el = document.getElementById('star-count');
+                if (el) el.textContent = n;
+                const inline = document.getElementById('star-count-inline');
+                if (inline) inline.textContent = n;
             })
             .catch(() => {
-                document.getElementById('star-count').textContent = '396';
+                const el = document.getElementById('star-count');
+                if (el) el.textContent = '395';
+                const inline = document.getElementById('star-count-inline');
+                if (inline) inline.textContent = '395';
             });
     </script>
 </body>

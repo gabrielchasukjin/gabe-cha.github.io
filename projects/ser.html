@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Speech Emotion Recognition — Gabriel Cha</title>
+    <meta name="description" content="Classifying emotions from 12k audio clips with CNNs, SVMs, and Vision Transformers. 86% test accuracy across RAVDESS, TESS, CREMA-D, and SAVEE.">
+
+    <meta property="og:type" content="article">
+    <meta property="og:site_name" content="Gabriel Cha">
+    <meta property="og:title" content="Speech Emotion Recognition with CNNs, SVMs, and Vision Transformers">
+    <meta property="og:description" content="Classifying emotions from 12k audio clips. 86% test accuracy across RAVDESS, TESS, CREMA-D, and SAVEE.">
+    <meta property="og:url" content="https://gabrielcha.com/projects/ser.html">
+    <meta property="og:image" content="https://gabrielcha.com/assests/ser.png">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Speech Emotion Recognition with CNNs, SVMs, and Vision Transformers">
+    <meta name="twitter:description" content="86% test accuracy classifying emotions across four public datasets.">
+    <meta name="twitter:image" content="https://gabrielcha.com/assests/ser.png">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,400;8..60,500;8..60,600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../styles.css?v=40">
+</head>
+<body>
+
+    <article class="article">
+        <a href="../" class="back-link">← back home</a>
+
+        <header class="article-header">
+            <div class="article-eyebrow">Research project · audio ML</div>
+            <h1>Speech Emotion Recognition with CNNs, SVMs, and Vision Transformers</h1>
+            <div class="article-meta">
+                December 2024
+                <span class="dot">·</span>
+                Halıcıoğlu Data Science Institute Undergraduate Research Scholarship
+            </div>
+            <div class="article-authors">
+                Gabriel Cha, JunHee Hwang, Arman Rahman &nbsp;·&nbsp; Mentor: Justin Eldridge
+            </div>
+            <div class="article-links">
+                <a href="https://github.com/gabrielchasukjin/Speech-Emotion-Recognition" target="_blank">GitHub</a>
+            </div>
+        </header>
+
+        <div class="article-body">
+            <p class="lede">
+                Classifying human emotions from speech — happiness, sadness, anger, neutrality — using ML over augmented spectrograms. The best model (a CNN) reached <strong>86% accuracy</strong> on a 12,000-clip benchmark.
+            </p>
+
+            <figure>
+                <img src="../assests/ser.png" alt="Speech Emotion Recognition framework">
+                <figcaption>End-to-end pipeline: audio aggregation, augmentation, spectrogram extraction, model training, evaluation.</figcaption>
+            </figure>
+
+            <h2>Data</h2>
+            <p>
+                We aggregated and processed 12,000 audio clips drawn from four public emotion-labeled datasets:
+            </p>
+            <ul>
+                <li><strong>RAVDESS</strong> — Ryerson Audio-Visual Database of Emotional Speech and Song</li>
+                <li><strong>TESS</strong> — Toronto Emotional Speech Set</li>
+                <li><strong>CREMA-D</strong> — Crowd-Sourced Emotional Multimodal Actors Dataset</li>
+                <li><strong>SAVEE</strong> — Surrey Audio-Visual Expressed Emotion</li>
+            </ul>
+            <p>
+                Combining datasets meant resolving conflicting label taxonomies, normalizing sample rates, and handling per-corpus speaker bias.
+            </p>
+
+            <h2>Approach</h2>
+            <p>
+                To simulate real-world acoustic variability, we augmented every clip with noise injection and time-stretching. Each augmented clip was converted into a spectrogram — a visual representation of how its frequency content evolves over time — so we could apply image models alongside audio-specific ones.
+            </p>
+            <p>
+                We trained and compared four classifiers:
+            </p>
+            <ul>
+                <li><strong>Convolutional Neural Network (CNN)</strong> — best overall,</li>
+                <li><strong>Vision Transformer (ViT)</strong> — competitive on cleaner subsets,</li>
+                <li><strong>Support Vector Machine (SVM)</strong> — a strong classical baseline,</li>
+                <li><strong>Decision Tree</strong> — interpretability check.</li>
+            </ul>
+
+            <h2>Results</h2>
+            <ul>
+                <li><strong>Best model:</strong> CNN at <strong>86% test accuracy</strong>.</li>
+                <li><strong>Failure mode:</strong> the CNN was <em>overconfident</em> in some misclassifications — most strikingly, mis-labeling <em>anger</em> as <em>sadness</em> with high probability.</li>
+            </ul>
+
+            <h2>What I took away</h2>
+            <p>
+                The overconfident-misclassification pattern made the interpretability and fairness side of ML feel suddenly very concrete. A model that says it's 95% sure when it's wrong is not a small step away from a model that says it's 95% sure when it's right — those are completely different products in a downstream system. That observation pulled me toward the work on Concept Bottleneck LLMs that I started shortly after.
+            </p>
+
+            <hr>
+            <p>
+                Built with <code>librosa</code>, <code>scikit-learn</code>, <code>TensorFlow</code>, and a lot of spectrograms. Repo: <a href="https://github.com/gabrielchasukjin/Speech-Emotion-Recognition" target="_blank">github.com/gabrielchasukjin/Speech-Emotion-Recognition</a>.
+            </p>
+        </div>
+
+        <div class="article-footer">
+            <a href="../">← back home</a>
+            <span>Gabriel Cha · 2024</span>
+        </div>
+    </article>
+
+    <footer class="site-footer">
+        <a href="https://www.linkedin.com/in/gabrielcha/" target="_blank">linkedin</a>
+        <span class="sep">/</span>
+        <a href="https://github.com/gabrielchasukjin" target="_blank">github</a>
+        <span class="sep">/</span>
+        <a href="../assests/resume.pdf" target="_blank">resume</a>
+        <span class="sep">/</span>
+        <a href="mailto:gsc2133@columbia.edu">email</a>
+    </footer>
+</body>
+</html>
