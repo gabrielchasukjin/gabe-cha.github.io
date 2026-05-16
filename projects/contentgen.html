@@ -11,16 +11,16 @@
     <meta property="og:title" content="ContentGen — SIGCSE '26">
     <meta property="og:description" content="A JupyterLab extension that generates programming practice questions for data science using LLMs. Accepted at SIGCSE 2026.">
     <meta property="og:url" content="https://gabrielcha.com/projects/contentgen.html">
-    <meta property="og:image" content="https://gabrielcha.com/assests/portrait.jpg">
+    <meta property="og:image" content="https://gabrielcha.com/assests/contentgen-hero.png">
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:title" content="ContentGen — SIGCSE '26">
     <meta name="twitter:description" content="A JupyterLab extension that generates programming practice questions for data science using LLMs.">
-    <meta name="twitter:image" content="https://gabrielcha.com/assests/portrait.jpg">
+    <meta name="twitter:image" content="https://gabrielcha.com/assests/contentgen-hero.png">
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,400;8..60,500;8..60,600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="../styles.css?v=40">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../styles.css?v=45">
 </head>
 <body>
 
@@ -41,57 +41,222 @@
                 <span style="font-size: 0.85rem;">*co-first authors</span>
             </div>
             <div class="article-links">
-                <a href="../assests/sigcse-paper.pdf" target="_blank">PDF</a>
                 <a href="https://dl.acm.org/doi/10.1145/3770762.3772619" target="_blank">ACM Digital Library</a>
+                <a href="https://github.com/dstl-lab/ContentGen-demo" target="_blank">GitHub</a>
                 <a href="#cite">BibTeX</a>
             </div>
         </header>
 
         <div class="article-body">
             <p class="lede">
-                ContentGen is an open-source JupyterLab extension that generates programming practice questions inside the instructor's own notebook. The paper is an experience report on prototyping the tool, iteratively improving it through evidence-based prompt engineering, and evaluating the generated content against three pedagogical metrics.
+                ContentGen is an open-source JupyterLab extension that generates programming practice questions inside the instructor's own notebook. This paper is an experience report on prototyping the tool, iteratively improving it through evidence-based prompt engineering, and evaluating the generated content against three pedagogical metrics: Correctness, Contextual Fit, and Coherence.
             </p>
 
-            <h2>The problem</h2>
+            <figure class="paper-figure paper-hero">
+                <img src="../assests/contentgen-hero.png" alt="ContentGen sidebar inside JupyterLab generating a practice question and answer cell">
+                <figcaption><strong>Figure 1.</strong> An overview of ContentGen's interface. (A) Instructors select a notebook cell as inspiration for a practice question. (B) They can specify the input prompt to clarify their intent. (C) ContentGen generates a question and corresponding answer, shown both in the sidebar and embedded below the original cell. (D) Instructors can accept the suggestion, cancel it, or submit a follow-up prompt for a new one.</figcaption>
+            </figure>
+
+            <h2>1. Introduction</h2>
             <p>
-                Instructors of programming courses constantly need fresh practice questions. LLMs can plausibly write them, but output quality is inconsistent: questions can have subtle errors, hallucinations, or be pedagogically weak. That inconsistency is the bottleneck — it forces instructors to verify and edit every generation, which often costs more than authoring from scratch.
+                Creating and revising practice questions is one of the main ongoing challenges for programming instructors. LLMs are a tempting solution, but their outputs vary in quality — subtle errors, hallucinations, and pedagogically weak phrasing force instructors to verify and fix every generation, often costing more than authoring from scratch. Prompt engineering can help, but it is rarely clear how to systematically tell whether a prompt change has actually improved things, especially in an educational context: what does "better" even mean for a generated practice problem?
+            </p>
+            <p>
+                We present an experience report on the design, implementation, and iterative improvement of ContentGen, a JupyterLab extension that generates practice problems from existing instructional material. To guide our development, we built a dataset of 91 examples from data science courses we teach and developed three binary metrics tailored to our pedagogical goals: <strong>Correctness</strong> (is the solution code valid?), <strong>Contextual Fit</strong> (does the question use the lecture's context?), and <strong>Coherence</strong> (does the question assess the relevant topic?). Using this framework, we compared three prompting strategies — <em>Baseline</em>, <em>Detailed</em>, and <em>Structured</em> — and found that the Structured prompt substantially improved generated-question quality across all three metrics. A usability study with six data science instructors further suggested that our final prototype was perceived as useful and effective. Our contributions are the tool itself, the open-source dataset and evaluation results, and a case study of evidence-based prompt engineering for an educational tool.
             </p>
 
-            <h2>The tool</h2>
+            <h2>2. Instructional Setting and Design Goals</h2>
             <p>
-                ContentGen lives inside JupyterLab as a sidebar extension. The workflow is:
-            </p>
-            <ol>
-                <li>The instructor selects an existing notebook cell as the "inspiration" for a practice question.</li>
-                <li>They optionally type a short prompt clarifying what they want.</li>
-                <li>ContentGen generates a question and reference answer, displays them in the sidebar, and inserts a new cell below the source.</li>
-                <li>The instructor can apply the suggestion, cancel it, or follow up with refinements.</li>
-            </ol>
-            <p>
-                The whole interaction stays inside the tool they already use to build course materials — no separate web app, no copy-pasting between contexts.
-            </p>
-
-            <h3>Three design goals</h3>
-            <ul>
-                <li><strong>D1 — In-workflow:</strong> live where the instructor already works (JupyterLab).</li>
-                <li><strong>D2 — Automatic context discovery:</strong> the tool should figure out what context to send the LLM, not force the instructor to assemble it.</li>
-                <li><strong>D3 — Effective for instruction:</strong> generated questions should be <em>correct</em> (solution code runs), have <em>contextual fit</em> (use the lecture's datasets and idioms), and be <em>coherent</em> (actually assess the right topic).</li>
-            </ul>
-
-            <h2>Evaluation</h2>
-            <p>
-                We open-sourced a dataset of <strong>91 test cases</strong> drawn from real course materials at UC San Diego and used three binary metrics tracking D3: Correctness, Contextual Fit, and Coherence.
+                We primarily teach first- and early second-year data science students at a large, public, PhD-granting university. These students learn Python and pandas to manipulate data tables for exploratory analysis and data cleaning. In our courses, we introduce fundamentals with "finger exercises" — short programming problems presented during lectures and office hours, close variants of material students have already seen, designed to build confidence before harder assignments.
             </p>
             <p>
-                Three prompting strategies were compared:
+                Our early attempts to generate these exercises with off-the-shelf tools like the ChatGPT and Claude web apps surfaced three challenges. First, providing context was cumbersome: our materials live in Jupyter notebooks anchored to one or two datasets, and reusing those datasets matters pedagogically — but every prompt required manually re-describing them. Second, it was hard to persuade the LLM to adhere to course-specific idioms (e.g., teaching <code>df.get('salary')</code> before the more standard <code>df['salary']</code>). Third, we had no systematic way to tell whether prompt changes actually improved quality.
+            </p>
+            <p>
+                These challenges led to three design goals:
             </p>
             <ul>
-                <li><strong>Baseline</strong> — generic instructions plus the entire notebook as context.</li>
-                <li><strong>Detailed</strong> — step-by-step instructions with variable information.</li>
-                <li><strong>Structured</strong> — detailed instructions plus an automatically generated summary of the lecture content, organized by pedagogical topic.</li>
+                <li><strong>D1 — In-workflow:</strong> embed in the interface instructors already use (JupyterLab), not a separate web app.</li>
+                <li><strong>D2 — Automatic Context Discovery:</strong> the tool gathers the necessary context from the instructional materials itself, rather than forcing the instructor to assemble it.</li>
+                <li><strong>D3 — Effective for Instruction:</strong> generated questions should be <em>correct</em>, have <em>contextual fit</em> (reuse the lecture's datasets), and be <em>coherent</em> (assess the relevant topic).</li>
             </ul>
+
+            <h2>3. System Design</h2>
             <p>
-                The Structured prompt substantially improved generated-question quality across all three metrics relative to the Baseline. A usability study with <strong>six data science instructors</strong> further showed the final prototype was perceived as useful and effective.
+                Instructors interact with ContentGen through a sidebar chat inside JupyterLab. They select a notebook cell, optionally type a short prompt, and ContentGen generates a question + answer that appears both in the sidebar and as an inserted cell below the source. From there they can accept, cancel, or follow up. ContentGen is implemented in Python, JavaScript, and the JupyterLab Extension API; all code, prompts, and evaluation data are <a href="https://github.com/dstl-lab/ContentGen-demo" target="_blank">open-source on GitHub</a>. We exclusively use Gemini 2.0 Flash — more than 95% cheaper per token than flagship models — to see whether a smaller, cheaper model can still produce high-quality content.
+            </p>
+
+            <h3>Three prompt iterations</h3>
+            <p>
+                We compared three prompting approaches, each adding more structure to the context we sent the LLM:
+            </p>
+            <ul>
+                <li><strong>Baseline.</strong> One paragraph of instructions plus the entire notebook as a JSON string. Mimics copy-pasting a whole lecture into ChatGPT.</li>
+                <li><strong>Detailed.</strong> Step-by-step instructions that first ask the LLM to generate a code snippet that is a slight variation of the user's selected cell, then generate a question to match it. Also lists the variables currently defined in the notebook.</li>
+                <li><strong>Structured.</strong> Adds to the Detailed prompt by including an automatically generated summary of the notebook's structure — pedagogical topics, subtopics, functions defined, and datasets used. ContentGen pre-processes the notebook with an LLM call to produce this summary before any user request.</li>
+            </ul>
+
+            <h2>4. Quantitative Evaluation</h2>
+            <p>
+                We purposively selected <strong>91 test cases</strong> from the lecture notebooks of two foundational undergraduate data science courses we teach, spanning Python basics, NumPy, pandas, intermediate pandas, data visualization, and scikit-learn. Each test case consists of one notebook cell paired with a brief user prompt designed to guide question generation. For each test case, we ran all three prompt versions of ContentGen — generating an initial 273 question-answer pairs, plus 24 follow-up pairs to simulate instructors iterating on weak outputs, for a total of <strong>297 pairs</strong> for evaluation.
+            </p>
+
+            <h3>Evaluation criteria</h3>
+            <p>
+                We evaluated quality using three binary metrics, developed from pilot studies and our design goals. For data science, a good question must be more than just correct — it has to read clearly and fit the current teaching context.
+            </p>
+
+            <figure class="paper-table">
+                <figcaption><strong>Table 1.</strong> Evaluation metrics and scoring rubric used to assess the quality of generated contents.</figcaption>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Metric</th>
+                            <th>Definition (must satisfy all)</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Correctness</td>
+                            <td>
+                                The question is logically valid and includes all necessary information to answer it.<br>
+                                The solution is accurate with respect to the concepts, and the code is runnable.
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Contextual Fit</td>
+                            <td>
+                                The question reuses the same dataset or variables for instructional continuity.<br>
+                                The question aligns with the topic of the original cell and avoids unfamiliar APIs or concepts not yet introduced.
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Coherence</td>
+                            <td>
+                                The question is clear and focuses on the most relevant educational topics or concepts.<br>
+                                The question is different from the existing notebook cells and worth teaching as an independent example.
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </figure>
+
+            <h3>Calibration</h3>
+            <p>
+                Three authors independently rated a randomly sampled subset of 55 question-answer pairs (~18.5% of the total). After independent ratings, the three raters discussed discrepancies and refined shared interpretations. The κ scores indicate substantial agreement for Correctness and Coherence, and almost perfect agreement for Contextual Fit.
+            </p>
+
+            <figure class="paper-table">
+                <figcaption><strong>Table 2.</strong> Calibration results demonstrated high agreement across all metrics.</figcaption>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Metric</th>
+                            <th>Agreement Percentage</th>
+                            <th>Fleiss' Kappa κ</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Correctness</td>
+                            <td>90.9%</td>
+                            <td>0.772</td>
+                        </tr>
+                        <tr>
+                            <td>Contextual Fit</td>
+                            <td>90.9%</td>
+                            <td>0.867</td>
+                        </tr>
+                        <tr>
+                            <td>Coherence</td>
+                            <td>87.3%</td>
+                            <td>0.746</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </figure>
+
+            <p>
+                In the main round, each rater was assigned a distinct version of ContentGen and independently scored all questions generated by that version on the three binary metrics — 1 if the question met the standard, 0 otherwise. We normalized scores by computing the percentage of questions that received a 1 in each dimension.
+            </p>
+
+            <h3>Results</h3>
+            <p>
+                The Baseline performed poorly across all metrics, with Contextual Fit scoring only 23%. Failures clustered around questions that invented new datasets, used pandas operations too advanced for the current point in the course, or hallucinated column names. The Detailed prompt drove a dramatic jump in Contextual Fit from 23% to 76%, attributable mainly to explicit instructions on variable reuse and scope alignment. The Structured prompt then achieved the highest scores across the board by giving the LLM a topic-level map of the notebook, not just the raw cells. Coherence improved at every step but remained the lowest of the three metrics — generating pedagogically appropriate questions is harder than getting the code right.
+            </p>
+
+            <figure class="paper-figure">
+                <div class="bar-chart">
+                    <div class="bar-chart-legend">
+                        <span class="legend-item"><span class="swatch metric-correctness"></span>Correctness</span>
+                        <span class="legend-item"><span class="swatch metric-contextual"></span>Contextual Fit</span>
+                        <span class="legend-item"><span class="swatch metric-coherence"></span>Coherence</span>
+                    </div>
+                    <div class="bar-chart-body">
+                        <div class="bar-chart-axis">
+                            <span>100</span>
+                            <span>80</span>
+                            <span>60</span>
+                            <span>40</span>
+                            <span>20</span>
+                            <span>0</span>
+                        </div>
+                        <div class="bar-chart-plot">
+                            <div class="bar-group">
+                                <div class="bar-group-bars">
+                                    <div class="bar metric-correctness" style="--h: 68%"><span class="bar-label">68%</span></div>
+                                    <div class="bar metric-contextual" style="--h: 23%"><span class="bar-label">23%</span></div>
+                                    <div class="bar metric-coherence" style="--h: 56%"><span class="bar-label">56%</span></div>
+                                </div>
+                                <div class="bar-group-label">Baseline</div>
+                            </div>
+                            <div class="bar-group">
+                                <div class="bar-group-bars">
+                                    <div class="bar metric-correctness" style="--h: 78%"><span class="bar-label">78%</span></div>
+                                    <div class="bar metric-contextual" style="--h: 76%"><span class="bar-label">76%</span></div>
+                                    <div class="bar metric-coherence" style="--h: 61%"><span class="bar-label">61%</span></div>
+                                </div>
+                                <div class="bar-group-label">Detailed</div>
+                            </div>
+                            <div class="bar-group">
+                                <div class="bar-group-bars">
+                                    <div class="bar metric-correctness" style="--h: 91%"><span class="bar-label">91%</span></div>
+                                    <div class="bar metric-contextual" style="--h: 87%"><span class="bar-label">87%</span></div>
+                                    <div class="bar metric-coherence" style="--h: 77%"><span class="bar-label">77%</span></div>
+                                </div>
+                                <div class="bar-group-label">Structured</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <figcaption><strong>Figure 2.</strong> Iteration of prompt versions led to significant improvement across all metrics, with the Structured prompt achieving the best performance overall.</figcaption>
+            </figure>
+
+            <p>
+                Token usage was dominated by the notebook itself, inserted verbatim into the prompt. Baseline and Detailed used approximately 6,000–9,000 tokens per generation; Structured used about 12,000–16,000 because it involves two LLM calls (one to summarize the notebook, one to generate the question). Despite the increase, we estimate that roughly <strong>700 questions can be generated per U.S. dollar</strong> using the Structured version with Gemini 2.0 Flash.
+            </p>
+
+            <h2>5. Qualitative Evaluation</h2>
+            <p>
+                To externally validate the prototype, we conducted 50-minute, one-on-one, think-aloud usability studies with <strong>six participants</strong> (P1–P6, three faculty and three teaching assistants) from introductory and intermediate data science courses, all using the Structured prompt. Instructors found ContentGen easy to install and intuitive to use, and reported that the generated questions were generally useful (P1–P6).
+            </p>
+            <p>
+                When the tool fell short, the failure modes mapped cleanly onto our three quantitative metrics. Instructors almost always ran the generated solution to check for Correctness, noting that errors would "be misleading" for students (P2, P4). Contextual Fit issues arose when a question used a function they didn't "teach . . . until a week later" (P1), disrupting the pedagogical sequence. Coherence problems appeared when a question was "very complicated" (P1) or simply didn't test the intended concept — the goal is to "test the concept, not necessarily the syntax" (P2). Instructors preferred using ContentGen while preparing materials rather than live, citing a lack of trust in the LLM's reliability: "you don't know if it's going to give you a good question" (P1).
+            </p>
+
+            <h2>6. Discussion</h2>
+
+            <h3>Engineering prompts, context, and metrics</h3>
+            <p>
+                The most surprising part of building ContentGen was that the LLM work — not the JupyterLab integration — was the hard part. And within the LLM work, the genuinely difficult problem was not writing prompts but defining what "better" meant. Correctness, Contextual Fit, and Coherence emerged from our experience as data science instructors, who have different pedagogical needs than instructors of more "traditional" computer science courses. Ensuring a question reused a lecture's dataset (Contextual Fit) was just as important as the question being answerable (Correctness).
+            </p>
+            <p>
+                Once those metrics were defined, the design space of possible prompts collapsed into something navigable. Crucially, prompt iteration alone plateaued quickly: the jump from Baseline to Detailed was big, but further prompt tweaking did not produce similar gains. Most of our remaining engineering effort went into <em>curating better context</em> — pre-processing the notebook with an LLM call to extract topics, functions, and datasets, then feeding that structured summary to the question-generation call. This aligns with the recent view that <em>context engineering</em> is a more appropriate term than prompt engineering for the work of making LLM-based tools effective.
+            </p>
+
+            <h3>Using LLMs in practice as educators</h3>
+            <p>
+                Our findings suggest the most effective way to improve LLM-generated content is not intricate prompt design, but careful <em>context curation</em>. Instead of providing an LLM with an entire lecture notebook, instructors may achieve better results by first using an LLM to produce a structured summary of the notebook's topics, functions, and datasets, and then using that summary as the context for a second generation request. More broadly, as LLMs become more capable and cheaper, instructors will spend less time authoring from scratch and more time evaluating and integrating AI-generated content — pointing to a need for tools that help them quickly assess the pedagogical quality of an output and build the necessary trust.
             </p>
 
             <h2>My role</h2>
@@ -117,7 +282,7 @@
             <hr>
 
             <p>
-                Paper: <a href="../assests/sigcse-paper.pdf" target="_blank">PDF</a> · <a href="https://doi.org/10.1145/3770762.3772619" target="_blank">DOI 10.1145/3770762.3772619</a>. Released under CC BY 4.0.
+                <a href="https://doi.org/10.1145/3770762.3772619" target="_blank">DOI 10.1145/3770762.3772619</a> · <a href="https://github.com/dstl-lab/ContentGen-demo" target="_blank">Open-source repository</a>. Released under CC BY 4.0.
             </p>
         </div>
 
