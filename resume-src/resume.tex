@@ -1,0 +1,177 @@
+%==============================================================
+% Gabriel Cha — Resume
+% Reconstructed source. Compile with XeLaTeX (e.g. tectonic).
+% Font: Lexend (static instances 400/600/700 alongside this file).
+%==============================================================
+\documentclass[letterpaper,10pt]{article}
+
+\usepackage[empty]{fullpage}
+\usepackage{titlesec}
+\usepackage{enumitem}
+\usepackage[hidelinks]{hyperref}
+\usepackage{fontspec}
+\usepackage[dvipsnames]{xcolor}
+\usepackage{tabularx}
+
+% ---- Colors ----
+\definecolor{navy}{RGB}{26,60,90}
+
+% ---- Fonts (Lexend) ----
+\setmainfont{Lexend}[
+  Path=./,
+  Extension=.ttf,
+  UprightFont=*-400,
+  BoldFont=*-700,
+  FontFace={sb}{n}{*-600},
+  ItalicFont=*-400,
+  ItalicFeatures={FakeSlant=0.16},
+  BoldItalicFont=*-700,
+  BoldItalicFeatures={FakeSlant=0.16},
+]
+\newcommand{\semibold}{\fontseries{sb}\selectfont}
+
+% ---- Page geometry ----
+\addtolength{\oddsidemargin}{-0.55in}
+\addtolength{\evensidemargin}{-0.55in}
+\addtolength{\textwidth}{1.10in}
+\addtolength{\topmargin}{-0.68in}
+\addtolength{\textheight}{1.25in}
+
+\raggedbottom
+\raggedright
+\setlength{\tabcolsep}{0in}
+
+% ---- Section headings ----
+\titleformat{\section}{%
+  \vspace{-6pt}\color{navy}\bfseries\large
+}{}{0em}{}[\color{navy}\titlerule\vspace{-3pt}]
+\titlespacing*{\section}{0pt}{7pt}{2pt}
+
+% ---- Custom list macros ----
+\newcommand{\resumeItem}[1]{%
+  \item\small{#1 \vspace{-1.5pt}}%
+}
+
+\newcommand{\resumeSubheading}[4]{%
+  \vspace{1pt}\item[]
+  \begin{tabularx}{\linewidth}{@{}X r@{}}
+    \textbf{#1} & {\small #2} \\
+    \textit{\small #3} & \textit{\small #4} \\
+  \end{tabularx}\vspace{-5pt}%
+}
+
+\newcommand{\resumeProjectHeading}[2]{%
+  \vspace{1pt}\item[]
+  \begin{tabularx}{\linewidth}{@{}X r@{}}
+    \textbf{#1} & {\small #2} \\
+  \end{tabularx}\vspace{-5pt}%
+}
+
+\newlist{resumeItemList}{itemize}{1}
+\setlist[resumeItemList]{
+  leftmargin=0.15in, label=\textbullet, itemsep=1pt, topsep=3pt,
+  parsep=0pt, partopsep=0pt, after=\vspace{1pt}
+}
+
+\newlist{resumeList}{itemize}{1}
+\setlist[resumeList]{leftmargin=0in, label={}, itemsep=1pt, topsep=2pt}
+
+\newcommand{\resumeSubHeadingListStart}{\begin{resumeList}}
+\newcommand{\resumeSubHeadingListEnd}{\end{resumeList}\vspace{2pt}}
+\newcommand{\resumeItemListStart}{\begin{resumeItemList}}
+\newcommand{\resumeItemListEnd}{\end{resumeItemList}}
+
+\setlength{\parindent}{0pt}
+
+%==============================================================
+\begin{document}
+
+% ---------------- Header ----------------
+\begin{center}
+  {\color{navy}\bfseries\fontsize{23}{27}\selectfont Gabriel Cha}\\[5pt]
+  \small
+  \href{mailto:gsc2133@columbia.edu}{gsc2133@columbia.edu} \enskip$\cdot$\enskip
+  \href{https://linkedin.com/in/gabrielcha}{linkedin.com/in/gabrielcha} \enskip$\cdot$\enskip
+  \href{https://github.com/gabrielchasukjin}{github.com/gabrielchasukjin} \enskip$\cdot$\enskip
+  US Citizen
+\end{center}
+
+% ---------------- Education ----------------
+\section{EDUCATION}
+\resumeSubHeadingListStart
+  \resumeSubheading
+    {Columbia University}{New York, NY}
+    {M.S. in Data Science, 3.53 GPA}{09/2025 -- 12/2026}
+    \resumeItemListStart
+      \resumeItem{Applied Large Language Models \& Agentic AI, Distributed Compute \& LLM Training, Deep Learning \& Neural Networks}
+    \resumeItemListEnd
+  \resumeSubheading
+    {University of California, San Diego}{San Diego, CA}
+    {B.S. in Data Science, 3.75 GPA}{09/2021 -- 05/2025}
+    \resumeItemListStart
+      \resumeItem{Teaching Assistant: Taught data science (DSC 10, DSC 80) for 9 quarters to 1,200+ students, holding 120+ office hours}
+    \resumeItemListEnd
+\resumeSubHeadingListEnd
+
+% ---------------- Experience ----------------
+\section{EXPERIENCE}
+\resumeSubHeadingListStart
+  \resumeSubheading
+    {Honeywell}{Atlanta, GA}
+    {AI/ML Engineer Intern}{05/2026 -- 08/2026}
+    \resumeItemListStart
+      \resumeItem{Architected the AI-facing interface for Honeywell's physical-security platform: an MCP (Model Context Protocol) server---13 tools---that lets AI agents operate security systems (credentials, access, lockdowns) through one unified interface}
+      \resumeItem{Engineered a shared ontology that fuses fragmented data from multiple vendor backends into one clean, machine-consumable schema---so agents stay portable when a new system is added, with no rewrites to agent-facing tools}
+      \resumeItem{Benchmarked the ontology against raw API docs in a controlled test: grounding agents in the structured ontology cut token usage 34\% and dropped completion of the same task from 7 agent turns to 2 on average}
+      \resumeItem{Developed \texttt{llms.txt}, a knowledge harness that helps AI coding agents (Cursor, Claude Code) generate correct API calls without hallucinating parameters or auth flows---reducing token usage 60\%}
+    \resumeItemListEnd
+  \resumeSubheading
+    {Root Access AI (venture-backed AI startup)}{Manhattan, NY}
+    {AI/ML Engineer Intern}{09/2025 -- 05/2026}
+    \resumeItemListStart
+      \resumeItem{Engineered production LangChain coding agents for firmware, grounding agent reasoning in hardware datasheets to generate accurate device-control code; helped grow the enterprise customer base from 3 to 7 on a 5-person team}
+      \resumeItem{Designed a ``Plan Mode'' planning-then-execution workflow enabling structured reasoning, where the agent autonomously runs grep-based codebase exploration to ground its plan before writing any code --- improving alignment with user intent}
+      \resumeItem{Increased the agent's hardware-specific accuracy by 34\% by fine-tuning open-weight LLMs via QLoRA on cloud A100s using a custom-curated dataset}
+    \resumeItemListEnd
+  \resumeSubheading
+    {DSTL Lab}{San Diego, CA}
+    {AI Research Assistant}{10/2024 -- 05/2025}
+    \resumeItemListStart
+      \resumeItem{Designed an AI chatbot that generates course-aligned practice problems by retrieving and processing course-specific materials against active learning objectives; co-authored a SIGCSE 2026 paper on the work}
+      \resumeItem{Raised LLM generation accuracy from 23\% to 87\% by designing a two-stage data pipeline that cleaned and structured raw educational content into optimized model inputs}
+    \resumeItemListEnd
+  \resumeSubheading
+    {Edison}{Los Angeles, CA}
+    {Data Science Intern}{06/2024 -- 09/2024}
+    \resumeItemListStart
+      \resumeItem{Built a scalable system monitoring 70+ solar plants for automated outlier detection, transforming a 3-day manual review into a 10-minute automated workflow and preventing \$5K+/month in losses from undetected faults}
+      \resumeItem{Developed a Python ETL pipeline processing 1TB+ across 100+ files, eliminating 4-day manual reporting cycles to accelerate data delivery for energy-trading clients}
+      \resumeItem{Collaborated with a cross-functional energy analytics team to implement detection algorithms, improving system reliability and enabling faster grid-optimization decisions}
+    \resumeItemListEnd
+\resumeSubHeadingListEnd
+
+% ---------------- Projects ----------------
+\section{PROJECTS}
+\resumeSubHeadingListStart
+  \resumeProjectHeading
+    {Cloi.ai: AI debugging CLI (Y Combinator Interviewed)}{05/2025}
+    \resumeItemListStart
+      \resumeItem{Built an end-to-end developer tool integrating LLMs/SLMs for personalized debugging recommendations; packaged to npm and iterated based on user adoption metrics}
+    \resumeItemListEnd
+  \resumeProjectHeading
+    {Classifying Emotions with Machine Learning}{09/2023 -- 06/2024}
+    \resumeItemListStart
+      \resumeItem{Led \$6,500 grant-funded research classifying emotions in human speech, training and benchmarking multiple machine learning models to identify the top performer}
+    \resumeItemListEnd
+\resumeSubHeadingListEnd
+
+% ---------------- Skills ----------------
+\section{SKILLS}
+\vspace{2pt}
+\small{
+  \textbf{AI \& Agents:} LangChain, LangGraph, LLMs, RAG, Fine-Tuning (QLoRA), Context Engineering, LLM-as-a-Judge \\[2pt]
+  \textbf{Machine Learning:} PyTorch, TensorFlow, Hugging Face, Scikit-learn, NLP, Distributed Training \\[2pt]
+  \textbf{Languages \& Data:} Python, SQL, Java, Git, Pandas, Spark, NumPy, Tableau, ETL, A/B Testing
+}
+
+\end{document}
