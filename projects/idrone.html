@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>iDrone — Gabriel Cha</title>
+    <meta name="description" content="Controlling a drone's throttle with hand gestures — MediaPipe hand tracking on a MacBook, a Raspberry Pi Pico W, and a DAC wired into the remote's throttle stick.">
+
+    <meta property="og:type" content="article">
+    <meta property="og:site_name" content="Gabriel Cha">
+    <meta property="og:title" content="iDrone: control a drone with your hand">
+    <meta property="og:description" content="Controlling a drone's throttle with hand gestures — MediaPipe hand tracking on a MacBook, a Raspberry Pi Pico W, and a DAC wired into the remote's throttle stick.">
+    <meta property="og:url" content="https://gabrielcha.com/projects/idrone.html">
+    <meta property="og:image" content="https://gabrielcha.com/assests/portrait.jpg">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="iDrone: control a drone with your hand">
+    <meta name="twitter:description" content="Hand-gesture throttle control for a toy drone. MediaPipe + Pico W + MCP4728 DAC soldered into the remote.">
+    <meta name="twitter:image" content="https://gabrielcha.com/assests/portrait.jpg">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../styles.css?v=45">
+</head>
+<body>
+
+    <article class="article">
+        <a href="../" class="back-link">← back home</a>
+
+        <header class="article-header">
+            <div class="article-eyebrow">Hardware project · human-computer interaction</div>
+            <h1>iDrone: control a drone with your hand</h1>
+            <div class="article-meta">
+                Published Aug 2026
+                <span class="dot">·</span>
+                <a href="mailto:gsc2133@columbia.edu">gsc2133@columbia.edu</a>
+            </div>
+            <div class="article-authors">
+                Gabriel Cha
+            </div>
+            <div class="article-links">
+                <a href="https://github.com/pattssun/iDrone" target="_blank">GitHub</a>
+                <a href="https://www.instagram.com/reel/DYAmjTyxKFW/" target="_blank">Instagram (3.2M+ views)</a>
+                <a href="https://www.tiktok.com/@pattssun/video/7636158433917488398" target="_blank">TikTok (1.3M+ views)</a>
+            </div>
+        </header>
+
+        <figure>
+            <video src="../assests/idrone-hero.mp4" controls autoplay muted loop playsinline></video>
+            <figcaption>Open hand, fingers up — the drone climbs. Fist — it hovers. Fingers down — it lands.</figcaption>
+        </figure>
+
+        <div class="article-body">
+            <p class="lede">
+                A MacBook watches my right hand through the webcam. When I open my hand with fingers pointing up, the drone climbs. Fingers down, it descends. Fist, it hovers. Under the hood, a Raspberry Pi Pico W is hot-wired into a Holy Stone HS210 remote, feeding voltage straight into the throttle stick's wiper pad like a robot thumb.
+            </p>
+
+            <h2>The idea</h2>
+            <p>
+                Toy drones like the HS210 don't expose an API — the only way in is the physical remote. But the remote's throttle stick is just a potentiometer: the drone's chip reads a voltage between 0 and 3.3 V off the stick's wiper and translates it to thrust. So instead of reverse-engineering the radio protocol, iDrone impersonates the stick. A digital-to-analog converter is soldered onto the wiper pad and drives whatever voltage the hand-tracking pipeline asks for.
+            </p>
+
+            <h2>How it works</h2>
+            <p>
+                The whole system is a straight line from the webcam to the drone:
+            </p>
+            <ul>
+                <li><strong>Mac side</strong> — OpenCV pulls webcam frames and MediaPipe's hand-landmark model tracks the right hand. For each of the four main fingers, a vector from base joint to fingertip is measured against vertical: all four within 45° of up → climb (throttle 4095), all four down → descend (0), anything else — a fist, disagreement, no hand — → hover (2048). An EMA with ~300 ms ramp keeps the throttle gliding instead of snapping, and the values stream over USB serial at 115200 baud.</li>
+                <li><strong>Pico side</strong> — a MicroPython script reads the serial packets and writes the throttle to an MCP4728 DAC over I²C. The DAC's channel A is soldered to the remote's throttle wiper pad, sharing ground with the remote's PCB.</li>
+                <li><strong>Safety</strong> — a 500 ms watchdog on the Pico: if a fresh packet doesn't arrive in half a second (the Mac stalls, the cable wiggles), every channel snaps back to hover instead of doing something unpredictable.</li>
+            </ul>
+
+            <figure>
+                <img src="../assests/idrone-schematic.svg" alt="Full schematic: MacBook to Pico W to MCP4728 DAC to HS210 controller PCB to drone">
+                <figcaption>End to end: MacBook → Pico W → MCP4728 DAC → HS210 remote PCB → drone.</figcaption>
+            </figure>
+
+            <h2>Things learned the hard way</h2>
+            <ul>
+                <li><strong>The PCB mirrors left/right when you flip it over.</strong> Solder pad identity is not where intuition says it is — multimeter everything before touching the iron.</li>
+                <li><strong>Binding needs the physical pots.</strong> Cut the joystick out of the circuit and the bind handshake silently fails. The trick is to leave the stick electrically intact — the DAC wins during flight because it's a stiffer voltage source than the pot.</li>
+                <li><strong>The drone's chip pulses its ADC reads through the wipers.</strong> The weird ~300 mV jitter on the throttle pad is the sampling pattern, not a broken board.</li>
+                <li><strong>The watchdog is load-bearing.</strong> It's the difference between a hobby hack and something safe enough to fly indoors.</li>
+            </ul>
+
+            <h2>Honest limits</h2>
+            <p>
+                It's throttle only — the hand controls altitude while pitch, roll, and yaw stay on the physical sticks. Hover drifts, because there's no closed-loop position control. And it's a $40 toy drone, so it's indoors-only in practice. The next step is four-axis gesture control: pitch, roll, and yaw all on the hand.
+            </p>
+
+            <hr>
+
+            <p>
+                The full build guide — bill of materials (~$96 in parts), soldering steps, firmware, and the hand-tracking code — is MIT-licensed at <a href="https://github.com/pattssun/iDrone" target="_blank">github.com/pattssun/iDrone</a>. The repo is written so you can drop it into an AI coding agent and ask it to walk you through the build — that's how it was built in the first place.
+            </p>
+        </div>
+
+        <div class="article-footer">
+            <a href="../">← back home</a>
+            <span>Gabriel Cha · 2026</span>
+        </div>
+    </article>
+
+    <footer class="site-footer">
+        <a href="https://www.linkedin.com/in/gabrielcha/" target="_blank">linkedin</a>
+        <span class="sep">/</span>
+        <a href="https://github.com/gabrielchasukjin" target="_blank">github</a>
+        <span class="sep">/</span>
+        <a href="../assests/resume.pdf" target="_blank">resume</a>
+        <span class="sep">/</span>
+        <a href="mailto:gsc2133@columbia.edu">email</a>
+    </footer>
+
+</body>
+</html>
