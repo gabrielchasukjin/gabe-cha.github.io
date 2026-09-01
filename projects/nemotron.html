@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nemotron Reasoning Challenge — Gabriel Cha</title>
+    <meta name="description" content="Fine-tuning NVIDIA's Nemotron-30B MoE with LoRA to solve six families of reasoning puzzles — an experiment in chain-of-thought data engineering and an SFT→GRPO pipeline.">
+
+    <meta property="og:type" content="article">
+    <meta property="og:site_name" content="Gabriel Cha">
+    <meta property="og:title" content="Fine-tuning Nemotron-30B for the NVIDIA Reasoning Challenge">
+    <meta property="og:description" content="LoRA fine-tuning a 30B MoE to solve six reasoning-puzzle families — chain-of-thought data engineering + an SFT→GRPO pipeline.">
+    <meta property="og:url" content="https://gabrielcha.com/projects/nemotron.html">
+    <meta property="og:image" content="https://gabrielcha.com/assests/nemotron.svg">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Fine-tuning Nemotron-30B for the NVIDIA Reasoning Challenge">
+    <meta name="twitter:description" content="LoRA fine-tuning a 30B MoE to solve six reasoning-puzzle families.">
+    <meta name="twitter:image" content="https://gabrielcha.com/assests/nemotron.svg">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../styles.css?v=45">
+    <style>
+        .lb-you td { background: #eff4ff; color: var(--ink-strong); }
+        .lb-you td:first-child { color: var(--accent); }
+        .lb-gap td { color: var(--ink-faint); font-style: italic; text-align: center; }
+        .lb-live {
+            display: inline-block;
+            font-family: 'JetBrains Mono', ui-monospace, monospace;
+            font-size: 0.72rem;
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+            color: var(--accent);
+            border: 1px solid var(--accent);
+            border-radius: 999px;
+            padding: 3px 10px;
+            margin-bottom: 14px;
+        }
+    </style>
+</head>
+<body>
+
+    <article class="article">
+        <a href="../" class="back-link">← back home</a>
+
+        <header class="article-header">
+            <div class="article-eyebrow">Competition · LLM fine-tuning</div>
+            <h1>Fine-tuning Nemotron-30B to crack six kinds of reasoning puzzles</h1>
+            <div class="article-meta">
+                NVIDIA Nemotron Model Reasoning Challenge (Kaggle)
+                <span class="dot">·</span>
+                <a href="mailto:gsc2133@columbia.edu">gsc2133@columbia.edu</a>
+            </div>
+            <div class="article-authors">
+                Gabriel Cha
+            </div>
+            <div class="article-links">
+                <a href="https://www.kaggle.com/competitions/nvidia-nemotron-model-reasoning-challenge/leaderboard" target="_blank">Kaggle leaderboard</a>
+            </div>
+        </header>
+
+        <figure>
+            <img src="../assests/nemotron.svg" alt="Leaderboard chart: top team NullSira at 0.90, the 0.88 cluster, and Gabriel Cha at 0.83">
+            <figcaption>Where things stand on the live public leaderboard.</figcaption>
+        </figure>
+
+        <div class="article-body">
+            <span class="lb-live">● Live — competition in progress</span>
+
+            <p class="lede">
+                The NVIDIA Nemotron Model Reasoning Challenge asks one deceptively simple question: can you fine-tune an open Nemotron model to <em>reason</em> through puzzles it has never seen? My entry is a study in something I keep coming back to — that for deterministic tasks, the quality of your chain-of-thought <em>data</em> matters more than almost anything you do to the model.
+            </p>
+
+            <h2>The challenge</h2>
+            <p>
+                The benchmark is six families of puzzles, three easy and three genuinely hard:
+            </p>
+            <ul>
+                <li><strong>Numeral conversion, unit conversion, gravity/physics</strong> — mechanical once you know the rule.</li>
+                <li><strong>Substitution cipher</strong> — recover plaintext from a scrambled alphabet.</li>
+                <li><strong>Bit manipulation</strong> — infer a hidden boolean function mapping input bits to output bits.</li>
+                <li><strong>Equation transform</strong> — discover the structural rule rewriting one expression into another.</li>
+            </ul>
+            <p>
+                You submit a LoRA adapter (rank 32 max) on top of <strong>Nemotron-Nano-30B</strong>, a mixture-of-experts model. Scoring is exact-match on the boxed final answer, so there's nowhere to hide — the model either lands the answer or it doesn't.
+            </p>
+
+            <h2>My approach</h2>
+            <h3>1. Treat the chain-of-thought as the product</h3>
+            <p>
+                My first dataset let an LLM write the reasoning traces freehand. On the hard categories they were <em>garbage</em> — confident-sounding prose like "applying the compound operation…" that never actually did the math. The model dutifully learned to imitate the hand-waving. So I rebuilt the data around a rule: <em>every reasoning step has to be verified, not vibed.</em>
+            </p>
+            <h3>2. Solve the puzzles programmatically, then teach the trace</h3>
+            <p>
+                For the hard categories I wrote deterministic solvers and used <em>their</em> work as the chain-of-thought:
+            </p>
+            <ul>
+                <li><strong>Cipher solver</strong> — character alignment plus a 77-word vocabulary gap-fill, solving <strong>98.4%</strong> of cases.</li>
+                <li><strong>Bit solver</strong> — per-bit boolean decomposition (<code>out[0] = in[1] XNOR in[7]</code>), solving <strong>83.5%</strong>.</li>
+                <li><strong>Equation transform</strong> — structural analysis with the vague tails stripped out.</li>
+            </ul>
+            <p>
+                I also dropped 265 bit puzzles I couldn't solve cleanly — better to teach nothing than to teach noise.
+            </p>
+            <h3>3. Structured beats "natural"</h3>
+            <p>
+                I tried rewriting every trace into a chatty, DeepSeek-R1-style voice. It <em>scored worse.</em> For puzzles with one correct answer, a rigid, structured format teaches the pattern more reliably than fluent prose. That result reshaped how I think about CoT data.
+            </p>
+            <h3>4. SFT to teach format, GRPO to teach reasoning</h3>
+            <p>
+                The plan that moved the needle is a two-stage pipeline — the same shape NVIDIA's own AIMO-2 winning team used:
+            </p>
+            <ul>
+                <li><strong>SFT</strong> teaches the output format: <code>&lt;think&gt;…&lt;/think&gt;</code> then <code>\boxed{answer}</code>.</li>
+                <li><strong>GRPO</strong> (reinforcement learning) teaches the model to actually be <em>right</em>. Because every puzzle has a verifiable answer, the reward signal is exact — no reward model needed, and I can synthesize unlimited training puzzles.</li>
+            </ul>
+
+            <h2>The leaderboard</h2>
+            <figure class="paper-table">
+                <figcaption>Live public leaderboard (≈50% of the test set, standings not yet final). Out of 4,301 teams:</figcaption>
+                <table>
+                    <thead>
+                        <tr><th>#</th><th>Team</th><th>Score</th></tr>
+                    </thead>
+                    <tbody>
+                        <tr><td>1</td><td>NullSira</td><td>0.90</td></tr>
+                        <tr><td>2</td><td>Alehandreus &amp; Yurnero</td><td>0.88</td></tr>
+                        <tr><td>3</td><td>Domdolus Tolus</td><td>0.88</td></tr>
+                        <tr><td>4</td><td>Dipam Chakraborty</td><td>0.88</td></tr>
+                        <tr><td>5</td><td>vli</td><td>0.88</td></tr>
+                        <tr class="lb-gap"><td colspan="3">⋮ &nbsp; 2,396 teams</td></tr>
+                        <tr class="lb-you"><td>2,422</td><td>Gabriel Cha (me)</td><td>0.83</td></tr>
+                    </tbody>
+                </table>
+            </figure>
+            <p>
+                A solo entry at <strong>0.83</strong>, <strong>0.07</strong> off the top of a 4,301-team field, with a day still on the clock and the final 50% of the test set yet to be scored. The score climbed across the run — 0.61 → 0.70 → 0.74 → 0.83 — every jump traceable to a specific change in the <em>data</em>, not the hyperparameters.
+            </p>
+
+            <h2>What I took away</h2>
+            <ul>
+                <li><strong>Data quality is the lever.</strong> Verified, programmatic chain-of-thought beat both freehand LLM traces and a frontier model's natural-language rewrites.</li>
+                <li><strong>For deterministic tasks, structure &gt; fluency.</strong> The "nicer-sounding" dataset lost.</li>
+                <li><strong>Verifiable answers are a gift.</strong> They turn RL from a research project into a clean reward function — which is exactly why the SFT→GRPO pipeline is the path to closing that last 0.07.</li>
+            </ul>
+
+            <hr>
+
+            <p>
+                The work is live on the <a href="https://www.kaggle.com/competitions/nvidia-nemotron-model-reasoning-challenge/leaderboard" target="_blank">competition leaderboard</a>. I'll update this page with the final standings once the private test set is scored.
+            </p>
+        </div>
+
+        <div class="article-footer">
+            <a href="../">← back home</a>
+            <span>Gabriel Cha · 2026</span>
+        </div>
+    </article>
+
+    <footer class="site-footer">
+        <a href="https://www.linkedin.com/in/gabrielcha/" target="_blank">linkedin</a>
+        <span class="sep">/</span>
+        <a href="https://github.com/gabrielchasukjin" target="_blank">github</a>
+        <span class="sep">/</span>
+        <a href="../assests/resume.pdf" target="_blank">resume</a>
+        <span class="sep">/</span>
+        <a href="mailto:gsc2133@columbia.edu">email</a>
+    </footer>
+</body>
+</html>

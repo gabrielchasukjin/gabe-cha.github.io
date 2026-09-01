@@ -1,0 +1,34 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 450" width="800" height="450" font-family="Inter, system-ui, sans-serif">
+  <rect width="800" height="450" fill="#fafafa"/>
+  <rect x="0" y="0" width="6" height="450" fill="#2563eb"/>
+
+  <!-- eyebrow -->
+  <text x="56" y="66" font-family="'JetBrains Mono', ui-monospace, monospace" font-size="14" letter-spacing="3" fill="#888888">KAGGLE · NVIDIA</text>
+  <!-- title -->
+  <text x="56" y="108" font-size="34" font-weight="700" fill="#050505" letter-spacing="-0.5">Nemotron Reasoning</text>
+  <text x="56" y="146" font-size="34" font-weight="700" fill="#050505" letter-spacing="-0.5">Challenge</text>
+
+  <!-- bars -->
+  <!-- scale: 0.80 -> 0, 0.92 -> 380px; barX=300 -->
+  <g font-size="16">
+    <!-- #1 -->
+    <text x="56" y="227" fill="#555555" font-weight="500">1 · NullSira</text>
+    <rect x="300" y="210" width="316" height="22" rx="4" fill="#d9d9d9"/>
+    <text x="628" y="227" font-family="'JetBrains Mono', monospace" fill="#555555">0.90</text>
+
+    <!-- #2 cluster -->
+    <text x="56" y="287" fill="#555555" font-weight="500">2 · Alehandreus &amp; Yurnero</text>
+    <rect x="300" y="270" width="253" height="22" rx="4" fill="#d9d9d9"/>
+    <text x="628" y="287" font-family="'JetBrains Mono', monospace" fill="#555555">0.88</text>
+
+    <!-- gap -->
+    <text x="56" y="347" fill="#aaaaaa" font-size="14" font-style="italic">⋮  2,396 more teams</text>
+
+    <!-- you -->
+    <text x="56" y="407" fill="#050505" font-weight="700">2,422 · Gabriel Cha</text>
+    <rect x="300" y="390" width="95" height="22" rx="4" fill="#2563eb"/>
+    <text x="628" y="407" font-family="'JetBrains Mono', monospace" fill="#2563eb" font-weight="600">0.83</text>
+  </g>
+
+  <text x="744" y="430" text-anchor="end" font-family="'JetBrains Mono', monospace" font-size="12" fill="#aaaaaa">live · 4,301 teams</text>
+</svg>
