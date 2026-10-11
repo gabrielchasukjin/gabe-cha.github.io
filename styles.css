@@ -14,41 +14,54 @@
     --rule: #e6e6e6;
     --accent: #2563eb;
     --accent-hover: #1d4ed8;
+    --yc: #e8590c;
+    /* YC's pairing: DM Sans for text, Source Serif 4 for display; mono for small labels */
+    --sans: 'DM Sans', 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    --serif: 'Source Serif 4', Georgia, 'Times New Roman', serif;
+    --mono: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
 }
 
 html {
     scroll-behavior: smooth;
 }
 
-/* Floating "about me" link, top-right of homepage */
+/* "About me" link, top-right of homepage */
 .about-link {
     position: absolute;
-    top: 32px;
-    right: 40px;
+    top: 26px;
+    right: 32px;
     z-index: 10;
-    font-family: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
-    font-size: 0.78rem;
-    color: #c9c9c9;
-    letter-spacing: 0.04em;
-    transition: color 0.25s ease;
-    text-decoration: none;
+    font-family: var(--sans);
+    font-size: 0.95rem;
+    font-weight: 500;
+    color: var(--ink-strong);
+    transition: color 0.2s ease;
+}
+
+.about-link span {
+    display: inline-block;
+    transition: transform 0.2s ease;
 }
 
 .about-link:hover {
-    color: var(--ink-strong);
+    color: var(--accent);
+}
+
+.about-link:hover span {
+    transform: translateX(3px);
 }
 
 @media (max-width: 600px) {
     .about-link {
-        top: 20px;
-        right: 22px;
-        font-size: 0.74rem;
+        top: 18px;
+        right: 18px;
+        font-size: 0.88rem;
     }
 }
 
 body {
     background-color: var(--bg);
-    font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    font-family: var(--sans);
     font-feature-settings: "kern", "liga";
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
@@ -121,21 +134,80 @@ a:hover {
     }
 }
 
-/* ---------- Home page hero (existing layout, preserved) ---------- */
+/* ---------- Home: the ASCII valley, with the page sliding up over it ---------- */
 
-.main-wrapper {
-    min-height: calc(100vh - 80px);
-    display: flex;
-    flex-direction: column;
-    justify-content: flex-start;
-    align-items: center;
-    padding: 40px 40px 0;
-    animation: fadeIn 0.7s ease-out;
+/* yosemite-ascii.js draws the valley and the river on this fixed canvas */
+.world {
+    position: fixed;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    display: block;
+    z-index: 0;
+    pointer-events: none;
+    --scene-opacity: 0.6;   /* read by yosemite-ascii.js; the hover bird stays at full strength */
 }
 
-@keyframes fadeIn {
-    from { opacity: 0; transform: translateY(8px); }
-    to   { opacity: 1; transform: translateY(0); }
+/* the first screen is all scenery; the intro peeks in at the bottom */
+.landing {
+    position: relative;
+    z-index: 1;
+    height: 92vh;
+    height: 92svh;
+    min-height: 480px;
+}
+
+.landing-scroll {
+    position: absolute;
+    left: 50%;
+    bottom: 170px;          /* clear of the white fade at the bottom of the scene */
+    transform: translateX(-50%);
+    z-index: 2;
+    padding: 10px 20px;
+    border-radius: 999px;
+    background: var(--ink-strong);
+    color: #fff;
+    font-family: var(--sans);
+    font-size: 0.92rem;
+    font-weight: 500;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.18);
+    animation: landing-bob 2.4s ease-in-out infinite;
+}
+
+.landing-scroll:hover {
+    color: #fff;
+    background: var(--accent);
+}
+
+@keyframes landing-bob {
+    0%, 100% { transform: translate(-50%, 0); }
+    50%      { transform: translate(-50%, 5px); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .landing-scroll { animation: none; }
+}
+
+/* one white page that fades in from the scenery above it */
+.main-wrapper {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 24px 24px 0;
+    background: var(--bg);
+}
+
+.main-wrapper::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 100%;
+    height: 140px;
+    background: linear-gradient(to bottom, rgba(255, 255, 255, 0), var(--bg));
+    pointer-events: none;
 }
 
 .container {
@@ -145,12 +217,11 @@ a:hover {
     gap: 80px;
     max-width: 1100px;
     width: 100%;
-    margin-top: 60px;
 }
 
 .hero-portrait {
     flex-shrink: 0;
-    width: 500px;
+    width: 480px;
     max-width: 100%;
 }
 
@@ -158,7 +229,27 @@ a:hover {
     width: 100%;
     height: auto;
     display: block;
-    border-radius: 8px;
+    border-radius: 14px;
+}
+
+/* sections rise into place the first time they scroll into view (work-cards.js adds .in) */
+html.js .reveal {
+    opacity: 0;
+}
+
+html.js .reveal.in {
+    opacity: 1;
+    animation: rise 0.9s cubic-bezier(0.2, 0.7, 0.2, 1) backwards;
+}
+
+@keyframes rise {
+    from { opacity: 0; transform: translateY(24px); }
+    to   { opacity: 1; transform: none; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    html.js .reveal { opacity: 1; }
+    html.js .reveal.in { animation: none; }
 }
 
 .content {
@@ -166,18 +257,20 @@ a:hover {
 }
 
 h1 {
-    font-size: 2rem;
-    font-weight: 600;
+    font-family: var(--serif);
+    font-size: 2.9rem;
+    font-weight: 500;
+    line-height: 1.05;
     color: var(--ink-strong);
-    margin-bottom: 28px;
-    letter-spacing: -0.01em;
+    margin-bottom: 22px;
+    letter-spacing: -0.02em;
 }
 
 .bio {
-    font-size: 1rem;
-    line-height: 1.6;
-    color: var(--ink-muted);
-    margin-bottom: 16px;
+    font-size: 1.06rem;
+    line-height: 1.65;
+    color: #4b4b4b;
+    margin-bottom: 14px;
 }
 
 .affiliations {
@@ -214,10 +307,9 @@ h1 {
 }
 
 .affiliation-meta {
-    font-family: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
-    font-size: 0.7rem;
+    font-family: var(--sans);
+    font-size: 0.93rem;
     font-weight: 500;
-    letter-spacing: 0.03em;
     color: var(--ink-strong);
 }
 
@@ -323,124 +415,64 @@ h1 {
     }
 }
 
-/* ---------- Work grid (selected work on home) ---------- */
+/* ---------- Selected work: each row links straight to the paper or the repo ---------- */
 
 .work-section {
     width: 100%;
-    max-width: 920px;
-    margin: 100px auto 0;
-    padding: 0 40px;
-}
-
-.work-section + .work-section,
-.work-section.work-section-next {
-    margin-top: 120px;
-}
-
-/* Paper card — venue badge, authors, link row */
-.paper-card .paper-venue,
-.work-card-honor {
-    font-family: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
-    font-size: 0.72rem;
-    text-transform: uppercase;
-    letter-spacing: 0.14em;
-    color: var(--accent);
-    margin-bottom: 14px;
-    font-weight: 500;
-}
-
-.paper-card .work-card-meta {
-    display: none;
-}
-
-.paper-card .work-card-title {
-    font-size: 1.4rem;
-    line-height: 1.28;
-    margin-bottom: 10px;
-}
-
-.paper-card .paper-authors {
-    font-family: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
-    font-size: 0.78rem;
-    color: var(--ink-muted);
-    margin-bottom: 12px;
-    line-height: 1.55;
-    letter-spacing: 0;
-}
-
-.card-links {
-    margin-top: 16px;
-    display: flex;
-    flex-wrap: wrap;
-    gap: 8px;
-}
-
-.card-links a {
-    font-family: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
-    font-size: 0.74rem;
-    color: var(--ink-strong);
-    background: #f4f4f5;
-    border: 1px solid #e4e4e7;
-    padding: 6px 14px;
-    border-radius: 999px;
-    text-transform: lowercase;
-    letter-spacing: 0;
-    transition: background-color 0.2s ease, border-color 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease;
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-    cursor: pointer;
-}
-
-.card-links a:hover {
-    background: #e7e7ea;
-    border-color: #c8c8cc;
-    color: var(--ink-strong);
-    transform: translateY(-1px);
-    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.06);
+    max-width: 1060px;
+    margin: 120px auto 0;
 }
 
 .work-section h2 {
-    font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-    font-size: 1.9rem;
-    font-weight: 600;
+    font-family: var(--serif);
+    font-size: 2.3rem;
+    font-weight: 500;
     color: var(--ink-strong);
-    margin-bottom: 36px;
     letter-spacing: -0.02em;
     line-height: 1.1;
+    margin-bottom: 20px;
 }
 
 .work-grid {
     list-style: none;
-    display: flex;
-    flex-direction: column;
+    border-top: 1px solid var(--rule);
+}
+
+.work-grid > li {
+    border-bottom: 1px solid var(--rule);
 }
 
 .work-card {
     display: flex;
-    flex-direction: row;
     align-items: center;
-    gap: 36px;
-    padding: 52px 0;
-    border-bottom: 1px solid #f0f0f0;
+    gap: 48px;
+    padding: 44px 0;
+    color: inherit;
 }
 
-.work-card:first-child {
-    padding-top: 0;
+.work-card:hover {
+    color: inherit;
 }
 
-.work-card:last-child {
-    padding-bottom: 0;
-    border-bottom: none;
+.work-card:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 6px;
+    border-radius: 12px;
+}
+
+.work-media {
+    position: relative;
+    flex: 0 0 42%;
+    max-width: 42%;
 }
 
 .work-card-image {
-    display: block;
-    flex: 0 0 44%;
-    max-width: 44%;
+    position: relative;
     aspect-ratio: 16 / 9;
     overflow: hidden;
-    border-radius: 6px;
+    border-radius: 12px;
+    background: #f2f2f2;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.06), 0 10px 28px rgba(0, 0, 0, 0.07);
 }
 
 .work-card-image img,
@@ -449,13 +481,50 @@ h1 {
     height: 100%;
     object-fit: cover;
     display: block;
-    transition: transform 0.7s cubic-bezier(0.2, 0, 0.2, 1), opacity 0.3s ease;
+    transition: transform 0.8s cubic-bezier(0.2, 0, 0.2, 1);
 }
 
 .work-card:hover .work-card-image img,
 .work-card:hover .work-card-image video {
     transform: scale(1.04);
-    opacity: 1;
+}
+
+/* Cloi: the YC interview, pinned to the corner like a polaroid */
+.yc-polaroid {
+    position: absolute;
+    right: -18px;
+    bottom: -30px;
+    width: 128px;
+    margin: 0;
+    padding: 7px 7px 26px;
+    background: #fff;
+    border-radius: 3px;
+    box-shadow: 0 12px 30px rgba(20, 24, 36, 0.22);
+    transform: rotate(7deg);
+    transition: transform 0.55s cubic-bezier(0.2, 0.7, 0.2, 1);
+    z-index: 2;
+}
+
+.yc-polaroid img {
+    display: block;
+    width: 100%;
+    aspect-ratio: 4 / 5;
+    object-fit: cover;
+}
+
+.yc-polaroid figcaption {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 6px;
+    text-align: center;
+    font-family: var(--mono);
+    font-size: 0.62rem;
+    color: #555;
+}
+
+.work-card:hover .yc-polaroid {
+    transform: rotate(-4deg) translate(10px, -18px) scale(1.14);
 }
 
 .work-card-body {
@@ -463,71 +532,114 @@ h1 {
     min-width: 0;
 }
 
-.work-card-meta {
+.work-meta {
+    font-family: var(--mono);
+    font-size: 0.72rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--ink-faint);
+    margin-bottom: 14px;
+}
+
+.work-index {
+    color: var(--ink-strong);
+    margin-right: 12px;
+}
+
+.work-stars {
+    text-transform: none;
+    letter-spacing: 0.02em;
+}
+
+.work-honor {
     display: flex;
-    align-items: baseline;
-    gap: 10px;
-    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.92rem;
+    font-weight: 500;
+    color: var(--accent);
     margin-bottom: 8px;
 }
 
-.work-card-meta .work-card-date {
-    font-family: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
-    font-size: 0.72rem;
-    color: var(--ink-faint);
-    text-transform: uppercase;
-    letter-spacing: 0.14em;
-    font-variant-numeric: tabular-nums;
-}
-
-.card-links a.github-stars .gh-icon {
-    width: 14px;
-    height: 14px;
-    color: var(--ink-strong);
+.work-honor::before {
+    content: '';
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: currentColor;
     flex-shrink: 0;
 }
 
-.work-card-title {
-    font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-    font-size: 1.32rem;
-    font-weight: 600;
-    color: var(--ink-strong);
-    margin-bottom: 10px;
-    line-height: 1.25;
-    letter-spacing: -0.015em;
+.work-honor.yc {
+    color: var(--yc);
 }
 
-.work-card-title a {
+.work-card-title {
+    font-family: var(--sans);
+    font-size: 1.55rem;
+    font-weight: 600;
     color: var(--ink-strong);
+    line-height: 1.22;
+    letter-spacing: -0.025em;
+    margin-bottom: 10px;
     transition: color 0.25s ease;
 }
 
-.work-card:hover .work-card-title a,
-.work-card-title a:hover {
+.work-arrow {
+    display: inline-block;
+    margin-left: 8px;
+    font-weight: 400;
+    color: var(--ink-faint);
+    transition: transform 0.25s ease, color 0.25s ease;
+}
+
+.work-card:hover .work-card-title {
     color: var(--accent);
 }
 
-.work-card-blurb {
-    font-size: 0.96rem;
+.work-card:hover .work-arrow {
+    transform: translate(3px, -3px);
+    color: var(--accent);
+}
+
+.work-authors {
+    font-size: 0.9rem;
     color: var(--ink-muted);
-    line-height: 1.62;
+    margin-bottom: 10px;
+}
+
+.work-card-blurb {
+    font-size: 1rem;
+    line-height: 1.65;
+    color: #4b4b4b;
 }
 
 @media (max-width: 700px) {
     .work-section {
-        padding: 0 24px;
-        margin-top: 70px;
+        margin-top: 80px;
     }
-    .work-grid {
-        gap: 56px;
+    .work-section h2 {
+        font-size: 1.9rem;
     }
     .work-card {
         flex-direction: column;
-        gap: 18px;
+        align-items: stretch;
+        gap: 22px;
+        padding: 32px 0;
     }
-    .work-card-image {
+    .work-media {
         flex: 0 0 auto;
         max-width: 100%;
+    }
+    .yc-polaroid {
+        width: 92px;
+        right: -6px;
+        bottom: -22px;
+        padding: 5px 5px 18px;
+    }
+    .yc-polaroid figcaption {
+        font-size: 0.54rem;
+        bottom: 4px;
     }
 }
 
@@ -637,6 +749,26 @@ footer.site-footer a {
 footer.site-footer .sep {
     color: var(--rule);
     margin: 0 2px;
+}
+
+/* homepage footer: plain links, no separators */
+.main-wrapper .site-footer {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 28px;
+    padding: 100px 20px 72px;
+    font-size: 0.95rem;
+    font-weight: 500;
+}
+
+.main-wrapper .site-footer a {
+    margin: 0;
+    color: var(--ink-strong);
+}
+
+.main-wrapper .site-footer a:hover {
+    color: var(--accent);
 }
 
 /* preserved legacy footer */
@@ -1358,23 +1490,22 @@ footer a:hover {
 
 @media (max-width: 900px) {
     .main-wrapper {
-        padding: 30px 24px 0;
+        padding: 0 16px;
     }
     .container {
         flex-direction: column;
-        gap: 50px;
-        margin-top: 40px;
+        gap: 32px;
     }
     .content {
         text-align: center;
     }
     h1 {
-        font-size: 1.75rem;
+        font-size: 2.4rem;
     }
 }
 
 @media (max-width: 500px) {
     h1 {
-        font-size: 1.65rem;
+        font-size: 2.2rem;
     }
 }
