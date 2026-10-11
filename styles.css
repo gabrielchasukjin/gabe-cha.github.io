@@ -25,38 +25,204 @@ html {
     scroll-behavior: smooth;
 }
 
-/* "About me" link, top-right of homepage */
-.about-link {
-    position: absolute;
-    top: 26px;
-    right: 32px;
+/* top-right, pinned while the page scrolls: the light/dark toggle, then "About me" */
+.top-actions {
+    position: fixed;
+    top: 22px;
+    right: 28px;
     z-index: 10;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+/* pill buttons over the scenery: dark by day, light by night */
+.pill-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 18px;
+    border-radius: 999px;
+    background: #0b1022;
+    color: #fff;
     font-family: var(--sans);
     font-size: 0.95rem;
     font-weight: 500;
-    color: var(--ink-strong);
-    transition: color 0.2s ease;
+    box-shadow: 0 8px 24px rgba(11, 16, 34, 0.25);
+    transition: transform 0.2s ease, box-shadow 0.2s ease, background-color 0.2s ease, color 0.2s ease;
 }
 
-.about-link span {
+.pill-link span {
     display: inline-block;
     transition: transform 0.2s ease;
 }
 
-.about-link:hover {
-    color: var(--accent);
+.pill-link:hover {
+    color: #fff;
+    background: #1b2452;
+    transform: translateY(-1px);
+    box-shadow: 0 12px 30px rgba(11, 16, 34, 0.32);
 }
 
-.about-link:hover span {
+.pill-link:hover span {
     transform: translateX(3px);
 }
 
+/* the About page's way back, pinned top-left */
+.home-link {
+    position: fixed;
+    top: 22px;
+    left: 28px;
+    z-index: 10;
+}
+
+.home-link:hover span {
+    transform: translateX(-3px);
+}
+
+/* light/dark toggle: shows a moon by day, a sun by night */
+.theme-toggle {
+    width: 42px;
+    height: 42px;
+    border: none;
+    border-radius: 50%;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    background: rgba(255, 255, 255, 0.92);
+    color: #0b1022;
+    box-shadow: 0 6px 18px rgba(11, 16, 34, 0.16);
+    transition: transform 0.25s ease, background-color 0.2s ease, color 0.2s ease;
+}
+
+.theme-toggle:hover {
+    transform: translateY(-1px) rotate(-14deg);
+}
+
+.theme-toggle svg {
+    width: 18px;
+    height: 18px;
+}
+
+.theme-toggle .icon-sun,
+html.night .theme-toggle .icon-moon {
+    display: none;
+}
+
+html.night .theme-toggle .icon-sun {
+    display: block;
+}
+
+.pill-link:focus-visible,
+.theme-toggle:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 3px;
+}
+
 @media (max-width: 600px) {
-    .about-link {
-        top: 18px;
-        right: 18px;
+    .top-actions {
+        top: 16px;
+        right: 16px;
+        gap: 8px;
+    }
+    .home-link {
+        top: 16px;
+        left: 16px;
+    }
+    .pill-link {
+        padding: 8px 14px;
         font-size: 0.88rem;
     }
+    .theme-toggle {
+        width: 36px;
+        height: 36px;
+    }
+}
+
+/* ---------- Dark mode: the valley by moonlight (theme.js sets html.night) ---------- */
+
+html.night {
+    --bg: #0b1022;
+    --ink: #dfe4f2;
+    --ink-strong: #f5f7fc;
+    --ink-muted: #a9b1c7;
+    --ink-faint: #7f88a3;
+    --rule: #252c48;
+    --accent: #a8c0ff;
+    --accent-hover: #c6d5ff;
+    --yc: #ff8a4c;
+    background: var(--bg);
+    color-scheme: dark;
+}
+
+html.night .world {
+    --scene-opacity: 0.92;
+}
+
+html.night .main-wrapper::before {
+    background: linear-gradient(to bottom, rgba(11, 16, 34, 0), var(--bg));
+}
+
+html.night .pill-link {
+    background: rgba(245, 247, 252, 0.95);
+    color: #0b1022;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.35);
+}
+
+html.night .pill-link:hover {
+    background: #fff;
+    color: #0b1022;
+}
+
+html.night .theme-toggle {
+    background: rgba(255, 255, 255, 0.1);
+    color: #ffe39a;
+    box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.24);
+}
+
+html.night .landing-scroll {
+    background: #f5f7fc;
+    color: #0b1022;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+}
+
+html.night .landing-scroll:hover {
+    background: #fff;
+    color: #0b1022;
+}
+
+html.night .bio,
+html.night .experience,
+html.night .work-card-blurb,
+html.night .about-lede,
+html.night .about-text {
+    color: #b9c1d6;
+}
+
+html.night .experience a,
+html.night .about-text a {
+    text-decoration-color: rgba(245, 247, 252, 0.35);
+}
+
+html.night .work-card-image {
+    background: #161c33;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.3), 0 12px 30px rgba(0, 0, 0, 0.4);
+}
+
+html.night .yc-polaroid,
+html.night .polaroid {
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.3), 0 14px 34px rgba(0, 0, 0, 0.5);
+}
+
+html.night .polaroid-wall li:hover .polaroid {
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3), 0 26px 52px rgba(0, 0, 0, 0.6);
+}
+
+/* the page eases between day and night along with the scene */
+body,
+.main-wrapper {
+    transition: background-color 0.4s ease, color 0.4s ease;
 }
 
 body {
@@ -417,6 +583,39 @@ h1 {
 
 /* ---------- Selected work: each row links straight to the paper or the repo ---------- */
 
+/* one line of experience, right above the work */
+.experience {
+    width: 100%;
+    max-width: 1060px;
+    margin: 120px auto 0;
+    font-family: var(--sans);
+    font-size: 1.3rem;
+    line-height: 1.6;
+    color: #4b4b4b;
+    text-wrap: pretty;
+}
+
+.experience a,
+.about-text a {
+    color: var(--ink-strong);
+    font-weight: 500;
+    text-decoration: underline;
+    text-decoration-color: #c8c8c8;
+    text-decoration-thickness: 1px;
+    text-underline-offset: 4px;
+    transition: color 0.2s ease, text-decoration-color 0.2s ease;
+}
+
+.experience a:hover,
+.about-text a:hover {
+    color: var(--accent);
+    text-decoration-color: currentColor;
+}
+
+.experience + .work-section {
+    margin-top: 72px;
+}
+
 .work-section {
     width: 100%;
     max-width: 1060px;
@@ -435,11 +634,6 @@ h1 {
 
 .work-grid {
     list-style: none;
-    border-top: 1px solid var(--rule);
-}
-
-.work-grid > li {
-    border-bottom: 1px solid var(--rule);
 }
 
 .work-card {
@@ -615,6 +809,13 @@ h1 {
 }
 
 @media (max-width: 700px) {
+    .experience {
+        margin-top: 80px;
+        font-size: 1.12rem;
+    }
+    .experience + .work-section {
+        margin-top: 56px;
+    }
     .work-section {
         margin-top: 80px;
     }
@@ -728,6 +929,143 @@ h1 {
     .now-section {
         padding: 0 22px;
         margin-top: 60px;
+    }
+}
+
+/* ---------- About: the same valley up top, then a wall of polaroids ---------- */
+
+.about-head {
+    width: 100%;
+    max-width: 680px;
+    text-align: center;
+}
+
+.about-eyebrow {
+    font-family: var(--mono);
+    font-size: 0.74rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--ink-faint);
+    margin-bottom: 18px;
+}
+
+.about-lede {
+    font-size: 1.2rem;
+    line-height: 1.6;
+    color: #4b4b4b;
+}
+
+.polaroid-wall {
+    list-style: none;
+    width: 100%;
+    max-width: 1000px;
+    margin: 88px auto 0;
+    columns: 3;
+    column-gap: 40px;
+}
+
+.polaroid-wall li {
+    position: relative;
+    break-inside: avoid;
+    padding: 14px 0 30px;
+}
+
+.polaroid-wall li:hover {
+    z-index: 2;
+}
+
+/* the middle column holds the one landscape shot, so it is shorter: drop it to stagger the wall */
+@media (min-width: 801px) {
+    .polaroid-wall li:nth-child(4) {
+        padding-top: 96px;
+    }
+}
+
+.polaroid-wall li.reveal.in {
+    animation-delay: calc(var(--i) * 60ms);
+}
+
+.polaroid {
+    position: relative;
+    margin: 0;
+    padding: 12px 12px 0;
+    background: #fff;
+    border-radius: 3px;
+    box-shadow: 0 1px 2px rgba(20, 24, 36, 0.08), 0 12px 30px rgba(20, 24, 36, 0.14);
+    transform: rotate(var(--r, 0deg));
+    transition: transform 0.55s cubic-bezier(0.2, 0.7, 0.2, 1), box-shadow 0.55s ease;
+}
+
+/* a strip of masking tape holding each one up */
+.polaroid::before {
+    content: '';
+    position: absolute;
+    top: -12px;
+    left: 50%;
+    width: 78px;
+    height: 24px;
+    background: rgba(236, 222, 186, 0.78);
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.06);
+    transform: translateX(-50%) rotate(calc(var(--r, 0deg) * -1.4));
+}
+
+.polaroid img {
+    display: block;
+    width: 100%;
+    height: auto;
+}
+
+.polaroid figcaption {
+    padding: 14px 4px 16px;
+    text-align: center;
+    font-family: var(--mono);
+    font-size: 0.78rem;
+    color: #555;
+}
+
+.polaroid-wall li:hover .polaroid {
+    transform: rotate(0deg) translateY(-6px) scale(1.04);
+    box-shadow: 0 2px 4px rgba(20, 24, 36, 0.08), 0 24px 48px rgba(20, 24, 36, 0.2);
+}
+
+.about-text {
+    width: 100%;
+    max-width: 640px;
+    margin: 72px auto 0;
+    font-size: 1.12rem;
+    line-height: 1.75;
+    color: #4b4b4b;
+}
+
+.about-text p + p {
+    margin-top: 22px;
+}
+
+@media (max-width: 800px) {
+    .polaroid-wall {
+        columns: 2;
+        column-gap: 24px;
+        margin-top: 64px;
+    }
+}
+
+@media (max-width: 500px) {
+    .about-lede {
+        font-size: 1.08rem;
+    }
+    .polaroid-wall {
+        column-gap: 16px;
+    }
+    .polaroid {
+        padding: 8px 8px 0;
+    }
+    .polaroid figcaption {
+        padding: 10px 2px 12px;
+        font-size: 0.68rem;
+    }
+    .about-text {
+        font-size: 1.04rem;
+        margin-top: 48px;
     }
 }
 

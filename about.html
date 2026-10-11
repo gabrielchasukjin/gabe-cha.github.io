@@ -19,58 +19,58 @@
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="styles.css?v=45">
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700&family=Source+Serif+4:opsz,wght@8..60,400;8..60,500;8..60,600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <script src="theme.js?v=1"></script>
+    <script>document.documentElement.classList.add('js');</script>
+    <link rel="stylesheet" href="styles.css?v=73">
 </head>
 <body>
-    <article class="article">
-        <a href="./" class="back-link">← back home</a>
 
-        <header class="article-header">
-            <div class="article-eyebrow">About</div>
+    <!-- the same ASCII valley and river as the homepage; the page slides up over it -->
+    <canvas id="yosemite-ascii" class="world" aria-hidden="true"></canvas>
+
+    <a href="./" class="pill-link home-link"><span aria-hidden="true">←</span> Home</a>
+    <nav class="top-actions" aria-label="Site">
+        <button class="theme-toggle" type="button" aria-label="Switch to dark mode" aria-pressed="false"><svg class="icon-moon" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M20.5 14.6A8.5 8.5 0 0 1 9.4 3.5a8.5 8.5 0 1 0 11.1 11.1z"/></svg><svg class="icon-sun" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4.5" fill="currentColor"/><g stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 1.8v2.4M12 19.8v2.4M1.8 12h2.4M19.8 12h2.4M4.8 4.8l1.7 1.7M17.5 17.5l1.7 1.7M4.8 19.2l1.7-1.7M17.5 6.5l1.7-1.7"/></g></svg></button>
+    </nav>
+
+    <header class="landing" aria-label="El Capitan in Yosemite at golden hour, drawn in animated ASCII characters">
+        <a href="#about" class="landing-scroll">Scroll <span aria-hidden="true">↓</span></a>
+    </header>
+
+    <div class="main-wrapper" id="about">
+        <header class="about-head reveal">
+            <p class="about-eyebrow">About</p>
             <h1>Hi, I'm Gabriel.</h1>
+            <p class="about-lede">a little about the people, places, and things i love beyond the work.</p>
         </header>
 
-        <div class="article-body">
-            <p class="lede">
-                a little about the people, places, and things i love beyond the work.
-            </p>
+        <ul class="polaroid-wall">
+            <li class="reveal" style="--i:0; --r:-3deg"><figure class="polaroid"><img src="assests/about/beach-friends.jpg" alt="three friends on a pebble beach at sunset"><figcaption>beach day</figcaption></figure></li>
+            <li class="reveal" style="--i:1; --r:2deg"><figure class="polaroid"><img src="assests/about/dog-portrait.jpg" alt="poodle smiling in a car"><figcaption>co-pilot</figcaption></figure></li>
+            <li class="reveal" style="--i:2; --r:-1.5deg"><figure class="polaroid"><img src="assests/about/tahoe.jpg" alt="lake tahoe view"><figcaption>lake tahoe</figcaption></figure></li>
+            <li class="reveal" style="--i:3; --r:2.5deg"><figure class="polaroid"><img src="assests/about/girlfriend.jpg" alt="me and my girlfriend at a harbor event"><figcaption>with my girlfriend</figcaption></figure></li>
+            <li class="reveal" style="--i:4; --r:-2deg"><figure class="polaroid"><img src="assests/about/night-cooking.jpg" alt="late-night cookout with friends"><figcaption>late-night cookout</figcaption></figure></li>
+            <li class="reveal" style="--i:5; --r:1.5deg"><figure class="polaroid"><img src="assests/about/yc-interview.jpg" alt="me at a Y Combinator interview track"><figcaption>yc interview, &rsquo;25</figcaption></figure></li>
+            <li class="reveal" style="--i:6; --r:-2.5deg"><figure class="polaroid"><img src="assests/about/dog-and-friend.jpg" alt="someone holding the dog on a sunny street"><figcaption>dog days</figcaption></figure></li>
+            <li class="reveal" style="--i:7; --r:3deg"><figure class="polaroid"><img src="assests/about/friends-night.jpg" alt="two friends at night roasting marshmallows"><figcaption>marshmallow duty</figcaption></figure></li>
+            <li class="reveal" style="--i:8; --r:-1deg"><figure class="polaroid"><img src="assests/about/thumbs-up.jpg" alt="me with a friend at an event, thumbs up"><figcaption>thumbs up</figcaption></figure></li>
+        </ul>
 
-                        <div class="photo-grid">
-                <figure class="tall"><img src="assests/about/beach-friends.jpg" alt="three friends on a pebble beach at sunset"></figure>
-                <figure><img src="assests/about/dog-portrait.jpg" alt="poodle smiling in a car"></figure>
-                <figure class="wide"><img src="assests/about/night-cooking.jpg" alt="late-night cookout with friends"></figure>
-                <figure class="small"><img src="assests/about/dog-and-friend.jpg" alt="someone holding the dog on a sunny street"></figure>
-                <figure class="tall"><img src="assests/about/tahoe.jpg" alt="lake tahoe view"></figure>
-                <figure><img src="assests/about/girlfriend.jpg" alt="me and my girlfriend at a harbor event"></figure>
-                <figure><img src="assests/about/yc-interview.jpg" alt="me at a Y Combinator interview track"></figure>
-                <figure class="small"><img src="assests/about/friends-night.jpg" alt="two friends at night roasting marshmallows"></figure>
-                <figure><img src="assests/about/thumbs-up.jpg" alt="me with a friend at an event, thumbs up"></figure>
-            </div>
+        <section class="about-text reveal">
+            <p>i spent my childhood in texas, went to high school and college in california, and started my master's in new york. right now i'm taking a break from school to chase startup dreams in san francisco. in summer 2025 my friend and i made it to a yc interview; we didn't get the funding, but we learned a lot — how to build and how to present. above are some photos of my closest friends.</p>
 
-            <p>
-                i grew up in california, went to uc san diego, and now live in new york. in summer 2025 my friend and i made it to a yc interview; we didn't get the funding, but we learned a lot — how to build and how to present. above are some photos of my closest friends.
-            </p>
+            <p>if you want to talk about anything — papers, projects, half-finished ideas, or just to say hi — i'm at <a href="mailto:gsc2133@columbia.edu">gsc2133@columbia.edu</a>. i answer everything.</p>
+        </section>
 
-            <p>
-                if you want to talk about anything — papers, projects, half-finished ideas, or just to say hi — i'm at <a href="mailto:gsc2133@columbia.edu">gsc2133@columbia.edu</a>. i answer everything.
-            </p>
-        </div>
+        <footer class="site-footer">
+            <a href="./">← Home</a>
+            <a href="https://www.linkedin.com/in/gabrielcha/" target="_blank">LinkedIn</a>
+            <a href="https://github.com/gabrielchasukjin" target="_blank">GitHub</a>
+        </footer>
+    </div>
 
-        <div class="article-footer">
-            <a href="./">← back home</a>
-            <span>Gabriel Cha</span>
-        </div>
-    </article>
-
-    <footer class="site-footer">
-        <a href="https://www.linkedin.com/in/gabrielcha/" target="_blank">linkedin</a>
-        <span class="sep">/</span>
-        <a href="https://github.com/gabrielchasukjin" target="_blank">github</a>
-        <span class="sep">/</span>
-        <a href="assests/resume.pdf" target="_blank">resume</a>
-        <span class="sep">/</span>
-        <a href="mailto:gsc2133@columbia.edu">email</a>
-    </footer>
+    <script src="yosemite-ascii.js?v=31"></script>
+    <script src="work-cards.js?v=5"></script>
 </body>
 </html>

@@ -3,7 +3,9 @@
 // characters: outlines become / | \ _ strokes, fills become texture. Below it a
 // river runs on forever: as the page scrolls, the view drifts down from the cliffs
 // into the water (reflections, current, glints, floating leaves).
-// CSS sets the scene's opacity via --scene-opacity.
+// CSS sets the scene's opacity via --scene-opacity. In dark mode (html.night, set by
+// theme.js) the same valley is drawn by moonlight: a starry sky, a full moon, fireflies
+// over the meadow and silver glints on the water.
 
 (() => {
     const canvas = document.getElementById('yosemite-ascii');
@@ -12,6 +14,7 @@
     const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
     const FONT = '"JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, monospace';
+    let NIGHT = document.documentElement.classList.contains('night');
 
     // ---------- helpers ----------
 
@@ -39,19 +42,43 @@
 
     // ---------- palette (from the poster) ----------
 
-    const P = {
-        water: hex('#56687a'), waterLight: hex('#2f4a63'),
-        spark: hex('#d9901f'),
-        deep: hex('#8f8d98'),
-        leaves: ['#d9772a', '#e8a33a', '#b8471c', '#c9862f'].map(hex),
-        bird: hex('#3a2c22'),
+    // Set for the current hour; rebuilt when the light/dark toggle flips.
+    let P, SKY_TOP, SKY_LOW, BIRD_INK;
+    function setPalette() {
+        P = NIGHT ? {
+            water: hex('#26365a'), waterLight: hex('#8fa6d8'),
+            spark: hex('#eef2ff'),
+            deep: hex('#141c36'),
+            leaves: ['#7a4a2c', '#8a6532', '#6b3320', '#7d5a2e'].map(hex),
+            bird: hex('#3a2c22'),
+            star: hex('#fff8e1'), firefly: hex('#ffec8c'), moonlight: hex('#c8d6ff'),
+        } : {
+            water: hex('#56687a'), waterLight: hex('#2f4a63'),
+            spark: hex('#d9901f'),
+            deep: hex('#8f8d98'),
+            leaves: ['#d9772a', '#e8a33a', '#b8471c', '#c9862f'].map(hex),
+            bird: hex('#3a2c22'),
+        };
+        // the sky, top to horizon
+        SKY_TOP = hex(NIGHT ? '#050816' : '#efaa78');
+        SKY_LOW = hex(NIGHT ? '#2a3260' : '#f9d8ad');
+        // the bird that follows the pointer: dark by day, pale (a bat) by night
+        BIRD_INK = hex(NIGHT ? '#e8ecf8' : '#1f1610');
+    }
+    setPalette();
+
+    // Day-for-night: desaturate, darken and push the poster's colours toward moonlight blue
+    const nightGrade = (c, k = 1) => {
+        const l = lum(c) * 255;
+        const n = mix(c, [l, l, l], 0.55);
+        return [n[0] * 0.5 * k, n[1] * 0.58 * k, n[2] * 0.82 * k];
     };
 
     // Materials, in painting order (later = in front)
-    const SKY = 1, RIDGE_FAR = 2, RIDGE = 3, ROCK = 4, PINE = 5, TREE = 6, MEADOW = 7, WATER = 8, BRANCH = 10, CLOUD = 11;
+    const SKY = 1, RIDGE_FAR = 2, RIDGE = 3, ROCK = 4, PINE = 5, TREE = 6, MEADOW = 7, WATER = 8, BRANCH = 10, CLOUD = 11, MOON = 12;
     // How much of a cell's colour glows behind its glyph
-    const TINT = { [SKY]: 0.6, [RIDGE_FAR]: 0.42, [RIDGE]: 0.36, [ROCK]: 0.36, [PINE]: 0.26, [TREE]: 0.34, [MEADOW]: 0.36, [WATER]: 0.3, [BRANCH]: 0.04, [CLOUD]: 0.56 };
-    const OUTLINED = new Set([RIDGE_FAR, RIDGE, ROCK, PINE, TREE, BRANCH, CLOUD]);
+    const TINT = { [SKY]: 0.6, [RIDGE_FAR]: 0.42, [RIDGE]: 0.36, [ROCK]: 0.36, [PINE]: 0.26, [TREE]: 0.34, [MEADOW]: 0.36, [WATER]: 0.3, [BRANCH]: 0.04, [CLOUD]: 0.56, [MOON]: 0.85 };
+    const OUTLINED = new Set([RIDGE_FAR, RIDGE, ROCK, PINE, TREE, BRANCH, CLOUD, MOON]);
     const MIRROR = { '/': '\\', '\\': '/', '^': 'v', 'v': '^', ',': "'", "'": ',', '`': ',', '_': '-', 'A': 'V', '!': 'i' };
     const STROKES = new Set(['/', '\\', '|', '-', '_', '(', ')', '^']);
 
@@ -63,7 +90,6 @@
         ['     ', '_/v\\_'],
     ];
     const BIRD_FLAP = [0, 1, 2, 1];
-    const BIRD_INK = hex('#1f1610');
 
     // ---------- state ----------
 
@@ -76,7 +102,8 @@
     let valley;               // valley rows with clouds and birds, rebuilt each frame
     let cells;                // the visible window, composited each frame
     let tint, tintCtx, tintImg;
-    let glints = [], birds = [], leaves = [];
+    let glints = [], birds = [], leaves = [], stars = [], fireflies = [];
+    let meteor = null, nextMeteor = 3;   // the occasional shooting star (night)
     let rWater, span;         // world row of the far bank; height of the near-bank water
     let off = 0, frac = 0;    // scroll position in world rows
     const pointer = { cx: 0, cy: 0, present: false, overScene: false };
@@ -168,8 +195,32 @@
         };
 
         // sky
-        fill(SKY, lin(0, 0, 0, 0.62, [[0, '#efaa78'], [1, '#f9d8ad']]));
+        fill(SKY, NIGHT ? lin(0, 0, 0, 0.62, [[0, '#050816'], [0.6, '#121a3a'], [1, '#2a3260']]) : lin(0, 0, 0, 0.62, [[0, '#efaa78'], [1, '#f9d8ad']]));
         g.fillRect(0, 0, W, H);
+
+        if (NIGHT) {
+            // a full moon, in screen space and clear of the buttons in the top corners:
+            // low on the right behind El Capitan's shoulder, or on the left on narrow screens
+            const narrow = W < 700;
+            const mx = W * (narrow ? 0.13 : 0.93), my = H * (narrow ? 0.1 : 0.17);
+            const mr = clamp(Math.min(W, H) * 0.065, 18, 58);
+            if (!matMode) {
+                const halo = g.createRadialGradient(mx, my, mr, mx, my, mr * 5);
+                halo.addColorStop(0, 'rgba(150,170,235,0.3)');
+                halo.addColorStop(1, 'rgba(150,170,235,0)');
+                g.fillStyle = halo; g.fillRect(0, 0, W, H);
+            }
+            const face = g.createRadialGradient(mx - mr * 0.3, my - mr * 0.3, 0, mx, my, mr);
+            face.addColorStop(0, '#fbf8ec'); face.addColorStop(1, '#d6d1bf');
+            fill(MOON, face);
+            g.beginPath(); g.arc(mx, my, mr, 0, Math.PI * 2); g.fill();
+            if (!matMode) {
+                g.fillStyle = 'rgba(150,145,128,0.55)';
+                for (const [dx, dy, rr] of [[-0.32, -0.18, 0.24], [0.28, 0.12, 0.17], [-0.06, 0.42, 0.14], [0.36, -0.36, 0.1]]) {
+                    g.beginPath(); g.arc(mx + dx * mr, my + dy * mr, rr * mr, 0, Math.PI * 2); g.fill();
+                }
+            }
+        }
 
         // far ridge, behind everything on the left
         g.beginPath();
@@ -371,7 +422,8 @@
                 mat[i] = bestV >= minVotes ? best : 0;
                 alpha[i] = A / cnt;
                 color[i] = A > 0 ? [R / A, G / A, B / A] : [0, 0, 0];
-                L[i] = lum(color[i]);
+                L[i] = lum(color[i]);     // glyphs are picked from the daylight poster either way
+                if (NIGHT && mat[i] !== SKY && mat[i] !== MOON) color[i] = nightGrade(color[i], mat[i] === CLOUD ? 0.85 : 1);
             }
         }
 
@@ -392,8 +444,8 @@
                 }
                 const cell = { g, c: color[i], k: TINT[m], m, a: alpha[i] };
                 if (m === BRANCH) {
-                    cell.c = [42, 32, 25];
-                    cell.bgc = mix(hex('#efaa78'), hex('#f9d8ad'), clamp((r + 0.5) / rows / 0.62, 0, 1));
+                    cell.c = NIGHT ? [70, 78, 112] : [42, 32, 25];
+                    cell.bgc = mix(SKY_TOP, SKY_LOW, clamp((r + 0.5) / rows / 0.62, 0, 1));
                     cell.k = TINT[SKY];
                 }
                 out[i] = cell;
@@ -419,7 +471,7 @@
         const nx = -gx / cw, ny = -gy / chh;           // outward normal, in pixels
         if (!nx && !ny) return '.';
         const g = angleGlyph(-ny, nx, ny);
-        if (m === CLOUD || m === TREE) {
+        if (m === CLOUD || m === TREE || m === MOON) {
             if (g === '|' || (g !== '-' && g !== '_')) return nx < 0 ? '(' : ')';
             return ny > 0 ? '_' : (m === TREE ? '~' : '-');
         }
@@ -457,6 +509,7 @@
             case MEADOW: return h < 0.3 ? ',' : h < 0.55 ? "'" : h < 0.72 ? '"' : '.';
             case BRANCH: return '#';
             case CLOUD: return L > 0.82 ? (h < 0.35 ? 'o' : h < 0.5 ? '.' : ' ') : (h < 0.5 ? '~' : '-');
+            case MOON: return L > 0.86 ? '@' : L > 0.76 ? '0' : 'o';
             default: return ' ';
         }
     }
@@ -477,8 +530,22 @@
         }
 
         birds = [];
-        for (let i = 0; i < 7; i++) {
-            birds.push({ x: cols * (0.55 + rnd() * 0.25) + i * 2.5, y: rows * (0.04 + rnd() * 0.1), phase: rnd() * 6, speed: 0.9 + rnd() * 0.25 });
+        stars = [];
+        fireflies = [];
+        if (!NIGHT) {
+            for (let i = 0; i < 7; i++) {
+                birds.push({ x: cols * (0.55 + rnd() * 0.25) + i * 2.5, y: rows * (0.04 + rnd() * 0.1), phase: rnd() * 6, speed: 0.9 + rnd() * 0.25 });
+            }
+            return;
+        }
+        // twinkling stars wherever the sky shows, thinning toward the horizon
+        const nStars = Math.round(cols * rows * 0.012);
+        for (let i = 0; i < nStars; i++) {
+            stars.push({ c: (rnd() * cols) | 0, r: (Math.pow(rnd(), 1.5) * rows * 0.55) | 0, phase: rnd() * 6.3, speed: 0.6 + rnd() * 2.2, big: rnd() < 0.18 });
+        }
+        // fireflies drifting over the meadow and the trees
+        for (let i = 0; i < 30; i++) {
+            fireflies.push({ x: rnd() * cols, y: rows * (0.6 + rnd() * 0.13), phase: rnd() * 6.3, speed: 0.7 + rnd() * 1.1, drift: 1 + rnd() * 3 });
         }
     }
 
@@ -501,7 +568,7 @@
                 const i = r * cols + c;
                 const s = base[i];
                 let cell = s;
-                if (s.m === SKY) {
+                if (s.m === SKY && !NIGHT) {          // a clear sky at night, so the stars show
                     const cc = cloudCells[r * cloudCols + ((c + shift) % cloudCols)];
                     if (cc && cc.a > 0.5) cell = cc;
                 }
@@ -509,6 +576,8 @@
                 valley[i] = cell;
             }
         }
+
+        if (NIGHT) nightSky(t);
 
         // birds crossing the sky
         for (const bd of birds) {
@@ -587,6 +656,45 @@
         draw();
     }
 
+    // Stars, fireflies and shooting stars, written into the valley so the river reflects them too.
+    function nightSky(t) {
+        for (const st of stars) {
+            if (st.r >= rWater) continue;
+            const i = st.r * cols + st.c, under = valley[i];
+            if (under.m !== SKY) continue;                       // hidden by clouds, the moon and the cliffs
+            const b = 0.5 + 0.5 * Math.sin(t * st.speed + st.phase);
+            if (b < 0.2) continue;
+            const g = st.big && b > 0.75 ? '*' : b > 0.6 ? '+' : '.';
+            valley[i] = { g, c: mix(P.moonlight, P.star, b), k: under.k, m: -1, bgc: under.c };
+        }
+        for (const ff of fireflies) {
+            const b = Math.sin(t * ff.speed + ff.phase);
+            if (b < 0.15) continue;
+            const c = Math.round(((ff.x + Math.sin(t * 0.3 + ff.phase) * ff.drift) % cols + cols) % cols);
+            const r = Math.round(ff.y + Math.sin(t * 0.5 + ff.phase * 1.3));
+            if (r < 0 || r >= rWater) continue;
+            const i = r * cols + c, under = valley[i];
+            valley[i] = { g: b > 0.7 ? '*' : '.', c: P.firefly, k: 0.35 + 0.5 * b, m: -1, bgc: P.firefly, pop: 1 };
+        }
+        // a shooting star every few seconds, sliding down and to the right
+        if (!meteor && t > nextMeteor) meteor = { t0: t, c0: cols * (0.1 + Math.random() * 0.5), r0: rows * (0.03 + Math.random() * 0.16), len: cols * (0.18 + Math.random() * 0.12) };
+        if (meteor) {
+            const p = (t - meteor.t0) / 1.1;
+            if (p > 1) { meteor = null; nextMeteor = t + 4 + Math.random() * 7; return; }
+            const head = p * meteor.len;
+            for (let k = 0; k < 9; k++) {
+                const dist = head - k * 1.4;
+                if (dist < 0) break;
+                const c = Math.round(meteor.c0 + dist), r = Math.round(meteor.r0 + dist * 0.22);
+                if (c < 0 || c >= cols || r < 0 || r >= rWater) continue;
+                const i = r * cols + c, under = valley[i];
+                if (under.m !== SKY && under.m !== -1) continue;
+                const fade = (1 - k / 9) * Math.sin(Math.PI * Math.min(1, p * 1.15));
+                valley[i] = { g: k === 0 ? '*' : k < 3 ? '-' : '.', c: mix(under.c, P.star, fade), k: under.k, m: -1, bgc: under.c };
+            }
+        }
+    }
+
     // Draws a sprite into the cell grid at full strength (pop 2 = bold), clearing the
     // scene's glyphs between the first and last stroke of each row so it reads cleanly.
     function stamp(sprite, x0, y0, ink, pop) {
@@ -659,7 +767,9 @@
                 const cell = cells[r * cols + c];
                 if (cell.g === ' ') continue;
                 if (cell.pop) { pops.push(c, y, cell); continue; }
-                const col = cell.m === BRANCH || cell.m === -1 ? cell.c : scale(cell.c, cell.m === SKY || cell.m === CLOUD ? 0.8 : 0.62);
+                const col = cell.m === BRANCH || cell.m === -1 ? cell.c
+                    : NIGHT ? mix(scale(cell.c, 1.45), P.moonlight, cell.m === SKY ? 0.3 : 0.12)     // glyphs glow against the dark
+                    : scale(cell.c, cell.m === SKY || cell.m === CLOUD ? 0.8 : 0.62);
                 const fs = `rgb(${col[0] | 0},${col[1] | 0},${col[2] | 0})`;
                 if (fs !== last) { ctx.fillStyle = fs; last = fs; }
                 ctx.fillText(cell.g, c * cw, y);
@@ -717,6 +827,20 @@
         visible = entries[0].isIntersecting;
         visible ? play() : pause();
     }).observe(document.querySelector('.landing') || canvas);
+
+    // follow the light/dark toggle: fade out, repaint the valley for the new hour, fade back in
+    new MutationObserver(() => {
+        const night = document.documentElement.classList.contains('night');
+        if (night === NIGHT) return;
+        NIGHT = night;
+        setPalette();
+        if (!ready) return;
+        const swap = () => { layout(); frame(reduceMotion ? 12 : (performance.now() - start) / 1000); canvas.style.opacity = ''; };
+        if (reduceMotion) { swap(); return; }
+        canvas.style.transition = 'opacity 0.25s ease';
+        canvas.style.opacity = '0';
+        setTimeout(swap, 250);
+    }).observe(document.documentElement, { attributes: true, attributeFilter: ['class'] });
 
     let resizeTimer, lastW = 0, lastH = 0;
     new ResizeObserver(() => {
