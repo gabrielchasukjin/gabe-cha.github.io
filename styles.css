@@ -1954,8 +1954,8 @@ html:not(.js) .strata {
 .hero-copy {
     position: absolute;
     left: 6vw;
-    bottom: 21vh;
-    max-width: 460px;
+    bottom: 17vh;
+    max-width: 500px;
     color: var(--ink-strong);
 }
 
@@ -1978,10 +1978,20 @@ html:not(.js) .strata {
 }
 
 .hero-sub {
-    font-size: 1.08rem;
+    font-size: 1.02rem;
     line-height: 1.6;
     color: #2b2b2b;
     text-wrap: pretty;
+}
+
+.hero-sub p + p {
+    margin-top: 10px;
+    font-size: 0.94rem;
+    color: #4a4a4a;
+}
+
+html.night .hero-sub p + p {
+    color: var(--ink-muted);
 }
 
 .hero-copy .landing-scroll {
@@ -2060,7 +2070,14 @@ html.night .hero-sub {
         max-width: none;
     }
     .hero-sub {
-        font-size: 0.98rem;
+        font-size: 0.9rem;
+        line-height: 1.5;
+    }
+    .hero-sub p + p {
+        font-size: 0.84rem;
+    }
+    .hero-title {
+        margin: 6px 0 12px;
     }
     .hero-caption {
         display: none;
@@ -2127,9 +2144,16 @@ html.night .hero-sub {
 }
 
 .now-role {
-    margin-top: 36px;
-    padding-top: 24px;
+    padding-top: 22px;
     border-top: 1px solid var(--rule);
+}
+
+.now-role .now-desc {
+    font-family: var(--serif);
+    font-size: 1.5rem;
+    line-height: 1.42;
+    letter-spacing: -0.01em;
+    color: var(--ink-strong);
 }
 
 .now-meta {

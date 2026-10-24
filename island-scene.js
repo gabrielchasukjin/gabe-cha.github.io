@@ -23,11 +23,11 @@
     // x, y: center as a fraction of the viewport; size: width relative to the big island;
     // depth: parallax strength, and whether it floats behind (< 0.6) or in front
     const PROJECTS = !withProjects ? [] : [
-        { style: 'range',         idx: '01', name: 'ContentGen',                href: '#work-01', d: [0.17, 0.2, 0.36, 0.45, 0.4],  m: [0.15, 0.17, 0.34, 0.45, 0.4] },
-        { style: 'interferogram', idx: '02', name: 'Cloi',                      href: '#work-02', d: [0.87, 0.19, 0.32, 0.4, -0.5], m: [0.86, 0.21, 0.34, 0.4, -0.5] },
-        { style: 'alpine',        idx: '03', name: 'Speech emotion recognition', href: '#work-03', d: [0.9, 0.47, 0.34, 0.55, 0.9], m: [0.1, 0.4, 0.26, 0.55, 0.9] },
-        { style: 'mineral',       idx: '04', name: 'DSC 80: Loan Applications', href: '#work-04', d: [0.47, 0.8, 0.26, 0.85, -0.3], m: [0.9, 0.43, 0.24, 0.85, -0.3] },
-        { style: 'bathymetry',    idx: '05', name: 'N-gram language model',     href: '#work-05', d: [0.4, 0.13, 0.22, 0.3, 1.4],  m: [0.45, 0.1, 0.22, 0.3, 1.4] },
+        { style: 'range',         idx: '01', name: 'ContentGen',                href: '#work-01', d: [0.28, 0.12, 0.28, 0.45, 0.4],  m: [0.13, 0.11, 0.26, 0.45, 0.4] },
+        { style: 'interferogram', idx: '02', name: 'Cloi',                      href: '#work-02', d: [0.87, 0.19, 0.32, 0.4, -0.5], m: [0.87, 0.15, 0.28, 0.4, -0.5] },
+        { style: 'alpine',        idx: '03', name: 'Speech emotion recognition', href: '#work-03', d: [0.9, 0.47, 0.34, 0.55, 0.9], m: [0.1, 0.25, 0.2, 0.55, 0.9] },
+        { style: 'mineral',       idx: '04', name: 'DSC 80: Loan Applications', href: '#work-04', d: [0.47, 0.8, 0.26, 0.85, -0.3], m: [0.9, 0.27, 0.2, 0.85, -0.3] },
+        { style: 'bathymetry',    idx: '05', name: 'N-gram language model',     href: '#work-05', d: [0.5, 0.07, 0.2, 0.3, 1.4],  m: [0.45, 0.1, 0.22, 0.3, 1.4] },
     ].map(p => ({ ...p, prep: Terrain.prepare(p.style, 56), bm: null, x: 0, y: 0 }));
 
     // ---------- sky dressing ----------
@@ -52,9 +52,9 @@
         canvas.width = Math.round(w * dpr);
         canvas.height = Math.round(h * dpr);
         const narrow = w < 700;
-        mainW = narrow ? Math.min(w * 0.74, h * 0.42) : Math.min(w * 0.44, h * 0.78, 660);
+        mainW = narrow ? Math.min(w * 0.6, h * 0.3) : Math.min(w * 0.44, h * 0.78, 660);
         mainX = narrow ? w * 0.5 : withProjects ? w * 0.63 : w * 0.5;
-        mainY = narrow ? h * 0.27 : withProjects ? h * 0.42 : h * 0.36;
+        mainY = narrow ? h * 0.17 : withProjects ? h * 0.42 : h * 0.36;
         for (const p of PROJECTS) {
             const [fx, fy, size, depth, spin] = narrow ? p.m : p.d;
             p.depth = depth;
