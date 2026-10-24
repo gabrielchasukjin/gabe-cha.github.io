@@ -29,20 +29,27 @@
     <link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700&family=Source+Serif+4:opsz,wght@8..60,400;8..60,500;8..60,600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
     <script src="theme.js?v=1"></script>
     <script>document.documentElement.classList.add('js');</script>
-    <link rel="stylesheet" href="styles.css?v=74">
+    <link rel="stylesheet" href="styles.css?v=75">
 </head>
 <body>
 
-    <!-- the ASCII valley and river; the page slides up over it -->
-    <canvas id="yosemite-ascii" class="world" aria-hidden="true"></canvas>
+    <!-- the floating islands (island-scene.js); the page slides up over them -->
+    <canvas id="island-scene" class="world" data-islands="projects" aria-hidden="true"></canvas>
 
     <nav class="top-actions" aria-label="Site">
         <button class="theme-toggle" type="button" aria-label="Switch to dark mode" aria-pressed="false"><svg class="icon-moon" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M20.5 14.6A8.5 8.5 0 0 1 9.4 3.5a8.5 8.5 0 1 0 11.1 11.1z"/></svg><svg class="icon-sun" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4.5" fill="currentColor"/><g stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 1.8v2.4M12 19.8v2.4M1.8 12h2.4M19.8 12h2.4M4.8 4.8l1.7 1.7M17.5 17.5l1.7 1.7M4.8 19.2l1.7-1.7M17.5 6.5l1.7-1.7"/></g></svg></button>
         <a href="about.html" class="pill-link">About me <span aria-hidden="true">→</span></a>
     </nav>
 
-    <header class="landing" aria-label="El Capitan in Yosemite at golden hour, drawn in animated ASCII characters">
-        <a href="#intro" class="landing-scroll">Scroll <span aria-hidden="true">↓</span></a>
+    <header class="landing">
+        <div class="hero-copy">
+            <p class="hero-eyebrow">Portfolio &middot; New York</p>
+            <h1 class="hero-title">Gabriel Cha</h1>
+            <p class="hero-sub">ML engineer and data scientist. I build agentic systems, fine-tune language models, and draw things like this in code. The small islands are my projects.</p>
+            <a href="#intro" class="landing-scroll">Scroll <span aria-hidden="true">↓</span></a>
+        </div>
+        <p class="hero-caption"><span class="hero-fig">fig. 01</span> a valley in the sky &mdash; <span data-poly-count>4,516</span> polygons, redrawn every frame. drag to turn it.</p>
+        <div class="island-tip" hidden></div>
     </header>
 
     <div class="main-wrapper" id="intro">
@@ -51,7 +58,7 @@
                 <img src="assests/hero.jpg" alt="Gabriel Cha — portrait at the beach">
             </div>
             <div class="content">
-                <h1>Gabriel Cha</h1>
+                <h2 class="intro-name">Gabriel Cha</h2>
 
                 <p class="bio">i like to think, explain, build.</p>
 
@@ -175,9 +182,10 @@
         </footer>
     </div>
 
-    <script src="yosemite-ascii.js?v=31"></script>
+    <script src="terrain.js?v=1"></script>
+    <script src="island-scene.js?v=1"></script>
     <script src="work-cards.js?v=5"></script>
-    <script src="strata.js?v=1"></script>
+    <script src="strata.js?v=2"></script>
     <script>
         fetch('https://api.github.com/repos/gabrielchasukjin/cloi')
             .then(res => res.json())

@@ -1,6 +1,6 @@
 // Light or dark: the visitor's saved choice, else their system setting. Loaded in <head>
 // so the right theme paints first; the toggle flips it and remembers the choice.
-// Dark mode is html.night, which also tells yosemite-ascii.js to draw the valley by moonlight.
+// Dark mode is html.night, which also tells island-scene.js to draw the night sky.
 
 (() => {
     const root = document.documentElement;
