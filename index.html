@@ -29,7 +29,7 @@
     <link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700&family=Source+Serif+4:opsz,wght@8..60,400;8..60,500;8..60,600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
     <script src="theme.js?v=1"></script>
     <script>document.documentElement.classList.add('js');</script>
-    <link rel="stylesheet" href="styles.css?v=73">
+    <link rel="stylesheet" href="styles.css?v=74">
 </head>
 <body>
 
@@ -74,8 +74,19 @@
 
         <section class="work-section">
             <h2 class="reveal">Selected work</h2>
+            <!-- one floating slab of terrain per project (strata.js); click one to jump to it -->
+            <nav class="strata reveal" aria-label="Projects">
+                <canvas aria-hidden="true"></canvas>
+                <ol class="strata-labels">
+                    <li><a href="#work-01"><span class="strata-index">01</span><span class="strata-name">ContentGen</span><span class="strata-meta">Paper · 2026</span></a></li>
+                    <li><a href="#work-02"><span class="strata-index">02</span><span class="strata-name">Cloi</span><span class="strata-meta">Open source · 2025</span></a></li>
+                    <li><a href="#work-03"><span class="strata-index">03</span><span class="strata-name">Speech emotion recognition</span><span class="strata-meta">Research · 2024</span></a></li>
+                    <li><a href="#work-04"><span class="strata-index">04</span><span class="strata-name">DSC 80: Loan Applications</span><span class="strata-meta">Teaching · 2024</span></a></li>
+                    <li><a href="#work-05"><span class="strata-index">05</span><span class="strata-name">N-gram language model</span><span class="strata-meta">Study project · 2023</span></a></li>
+                </ol>
+            </nav>
             <ul class="work-grid">
-                <li>
+                <li id="work-01">
                     <a class="work-card reveal" href="https://dl.acm.org/doi/10.1145/3770762.3772619" target="_blank" rel="noopener">
                         <div class="work-media">
                             <div class="work-card-image">
@@ -91,7 +102,7 @@
                         </div>
                     </a>
                 </li>
-                <li>
+                <li id="work-02">
                     <a class="work-card reveal" href="https://github.com/gabrielchasukjin/cloi" target="_blank" rel="noopener">
                         <div class="work-media">
                             <div class="work-card-image">
@@ -110,7 +121,7 @@
                         </div>
                     </a>
                 </li>
-                <li>
+                <li id="work-03">
                     <a class="work-card reveal" href="https://datascience.ucsd.edu/32-undergraduate-scholarships/" target="_blank" rel="noopener">
                         <div class="work-media">
                             <div class="work-card-image">
@@ -125,7 +136,7 @@
                         </div>
                     </a>
                 </li>
-                <li>
+                <li id="work-04">
                     <a class="work-card reveal" href="https://github.com/dsc-courses/dsc80-2026-fa/blob/main/projects/proj02/project.ipynb" target="_blank" rel="noopener">
                         <div class="work-media">
                             <div class="work-card-image">
@@ -141,7 +152,7 @@
                         </div>
                     </a>
                 </li>
-                <li>
+                <li id="work-05">
                     <a class="work-card reveal" href="https://github.com/gabrielchasukjin/LanguageModel/blob/main/model.ipynb" target="_blank" rel="noopener">
                         <div class="work-media">
                             <div class="work-card-image">
@@ -166,6 +177,7 @@
 
     <script src="yosemite-ascii.js?v=31"></script>
     <script src="work-cards.js?v=5"></script>
+    <script src="strata.js?v=1"></script>
     <script>
         fetch('https://api.github.com/repos/gabrielchasukjin/cloi')
             .then(res => res.json())
