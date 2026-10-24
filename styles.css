@@ -2066,3 +2066,151 @@ html.night .hero-sub {
         display: none;
     }
 }
+
+
+/* ---------- What I care about: my own words, and the work at Pax ---------- */
+
+.now {
+    width: 100%;
+    max-width: 1060px;
+    margin: 140px auto 0;
+    display: grid;
+    grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);
+    gap: 56px;
+    align-items: center;
+}
+
+.now-art {
+    margin: 0;
+}
+
+.now-island {
+    display: block;
+    width: 100%;
+    aspect-ratio: 1 / 0.74;
+}
+
+.now-art figcaption {
+    margin-top: 4px;
+    font-family: var(--mono);
+    font-size: 0.74rem;
+    line-height: 1.6;
+    color: var(--ink-faint);
+    max-width: 340px;
+}
+
+.now-eyebrow {
+    font-family: var(--mono);
+    font-size: 0.78rem;
+    font-weight: 400;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--ink-faint);
+    margin-bottom: 18px;
+}
+
+.now-quote {
+    margin: 0;
+    font-family: var(--serif);
+    font-size: 1.62rem;
+    line-height: 1.38;
+    letter-spacing: -0.01em;
+    color: var(--ink-strong);
+    text-wrap: pretty;
+}
+
+.now-quote p + p {
+    margin-top: 16px;
+    font-size: 1.22rem;
+    line-height: 1.5;
+    color: var(--ink-muted);
+}
+
+.now-role {
+    margin-top: 36px;
+    padding-top: 24px;
+    border-top: 1px solid var(--rule);
+}
+
+.now-meta {
+    font-family: var(--mono);
+    font-size: 0.8rem;
+    color: var(--ink-muted);
+}
+
+.now-meta a {
+    color: var(--ink-strong);
+    text-decoration: underline;
+    text-decoration-color: var(--rule);
+    text-underline-offset: 3px;
+}
+
+.now-meta a:hover {
+    color: var(--accent);
+    text-decoration-color: currentColor;
+}
+
+.now-dot {
+    display: inline-block;
+    vertical-align: 1px;
+    width: 8px;
+    height: 8px;
+    margin-right: 10px;
+    border-radius: 50%;
+    background: #22c55e;
+    box-shadow: 0 0 0 0 rgba(34, 197, 94, 0.5);
+    animation: now-pulse 2.2s ease-out infinite;
+}
+
+@keyframes now-pulse {
+    0%   { box-shadow: 0 0 0 0 rgba(34, 197, 94, 0.5); }
+    100% { box-shadow: 0 0 0 9px rgba(34, 197, 94, 0); }
+}
+
+.now-desc {
+    margin-top: 12px;
+    font-size: 1.08rem;
+    line-height: 1.65;
+    color: var(--ink);
+    text-wrap: pretty;
+}
+
+.now-tag {
+    display: inline-block;
+    margin-top: 14px;
+    padding: 4px 10px;
+    border-radius: 999px;
+    border: 1px solid var(--rule);
+    font-family: var(--mono);
+    font-size: 0.72rem;
+    color: var(--ink-muted);
+}
+
+.now + .experience {
+    margin-top: 96px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .now-dot { animation: none; }
+}
+
+@media (max-width: 800px) {
+    .now {
+        grid-template-columns: 1fr;
+        gap: 8px;
+        margin-top: 88px;
+    }
+    .now-art {
+        max-width: 380px;
+        margin: 0 auto;
+    }
+    .now-quote {
+        font-size: 1.32rem;
+    }
+    .now-quote p + p {
+        font-size: 1.08rem;
+    }
+    .now + .experience {
+        margin-top: 64px;
+    }
+}

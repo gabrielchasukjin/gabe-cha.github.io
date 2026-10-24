@@ -111,6 +111,30 @@ window.Terrain = (() => {
                 return c.contour ? mix(base, [255, 255, 255], 0.38) : base;
             },
         },
+        harbor: {   // half deterministic (stacked container terraces), half organic terrain, joined by a seam of light
+            seed: 83, relief: 0.12, spin: 0, wall: '#1d2a3a', shade: [0.62, 0.55],
+            height: (u, v, s) => {
+                const seam = 0.5 + 0.08 * Math.sin(v * 9 + 1);
+                if (u < seam - 0.02) {
+                    const bx = Math.floor(u * 9), by = Math.floor(v * 9);
+                    return 0.12 + 0.12 * Math.floor(hash(bx, by, s) * 5);
+                }
+                const t = clamp01((u - seam) / 0.12);
+                return 0.12 + t * 0.8 * Math.pow(fbm(u * 3, v * 3, s, 5), 1.4);
+            },
+            color: c => {
+                const seam = 0.5 + 0.08 * Math.sin(c.v * 9 + 1);
+                if (Math.abs(c.u - seam) < 0.018) return mix(SUN, [255, 255, 255], 0.4);
+                if (c.u < seam) {
+                    const bx = Math.floor(c.u * 9), by = Math.floor(c.v * 9);
+                    const box = ['#e4572e', '#2f6690', '#3a7d44', '#f4a259', '#1b2a41', '#c9cba3'].map(hex)[Math.floor(hash(by, bx, 9) * 6)];
+                    const edge = (c.u * 9) % 1 < 0.08 || (c.v * 9) % 1 < 0.08;
+                    return edge ? mix(box, [20, 24, 32], 0.55) : box;
+                }
+                if (c.h < 0.2) return mix(WATER, WATER2, clamp01(c.light * 0.8));
+                return c.h > 0.5 ? mix(GRANITE, GRANITE2, c.n) : mix(PINE2, GRASS, clamp01(c.h * 1.8 - 0.2 + 0.2 * c.n));
+            },
+        },
         valley: {   // golden-hour granite valley: a river, pine forest, one big monolith
             seed: 71, relief: 0.2, spin: 0, wall: '#6f6152', shade: [0.5, 0.72],
             height: (u, v, s) => {
