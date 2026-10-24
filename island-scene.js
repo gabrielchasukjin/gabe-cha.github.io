@@ -1,4 +1,4 @@
-// The landing scene: a granite valley floating in a golden-hour sky, turning slowly,
+// The landing scene: a granite valley floating in open space, turning slowly,
 // with a waterfall pouring off its edge. Around it drift smaller islands, one per
 // project, each in that project's terrain style; point at one to see which, click to
 // jump to it. Drag anywhere on the scene to spin the big island. Everything is drawn
@@ -33,10 +33,6 @@
     // ---------- sky dressing ----------
     const rand = (i, k) => Terrain.hash(i, k, 404);
     const stars = Array.from({ length: 140 }, (_, i) => ({ x: rand(i, 1), y: rand(i, 2) * 0.75, r: 0.4 + rand(i, 3) * 1.1, tw: rand(i, 4) * 6 }));
-    const clouds = Array.from({ length: 9 }, (_, i) => ({
-        x: rand(i, 5), y: 0.62 + rand(i, 6) * 0.34, r: 70 + rand(i, 7) * 110,
-        speed: 4 + rand(i, 8) * 7, front: i % 3 === 0, puffs: Array.from({ length: 5 }, (_, k) => [rand(i * 9 + k, 9) - 0.5, rand(i * 9 + k, 10) - 0.5, 0.5 + rand(i * 9 + k, 11) * 0.6]),
-    }));
 
     // ---------- state ----------
     let w = 0, h = 0, dpr = 1, mainW = 0, mainX = 0, mainY = 0;
@@ -70,20 +66,8 @@
 
     // ---------- drawing ----------
     function sky(night, t) {
-        const g = ctx.createLinearGradient(0, 0, 0, h);
-        if (night) {
-            g.addColorStop(0, '#04071a'); g.addColorStop(0.55, '#0a1030'); g.addColorStop(1, '#0b1022');
-        } else {
-            g.addColorStop(0, '#8db9e3'); g.addColorStop(0.42, '#cfdcea'); g.addColorStop(0.7, '#f8dcc0'); g.addColorStop(1, '#ffffff');
-        }
-        ctx.fillStyle = g;
-        ctx.fillRect(0, 0, w, h);
-        // a low sun (or moon) glowing behind the big island
-        const gx = mainX - mainW * 0.15, gy = mainY + mainW * 0.05, gr = mainW * (night ? 0.9 : 1.15);
-        const glow = ctx.createRadialGradient(gx, gy, 0, gx, gy, gr);
-        if (night) { glow.addColorStop(0, 'rgba(168,192,255,0.22)'); glow.addColorStop(1, 'rgba(168,192,255,0)'); }
-        else { glow.addColorStop(0, 'rgba(255,214,150,0.75)'); glow.addColorStop(0.45, 'rgba(255,196,140,0.28)'); glow.addColorStop(1, 'rgba(255,190,140,0)'); }
-        ctx.fillStyle = glow;
+        // a flat backdrop that matches the page, so the islands float on plain space
+        ctx.fillStyle = night ? '#0b1022' : '#ffffff';
         ctx.fillRect(0, 0, w, h);
         if (night) {
             for (const s of stars) {
@@ -92,24 +76,6 @@
                 ctx.fillRect(s.x * w, s.y * h, s.r, s.r);
             }
             ctx.globalAlpha = 1;
-        }
-    }
-
-    function cloudLayer(front, night, t) {
-        for (const c of clouds) {
-            if (c.front !== front) continue;
-            const span = w + c.r * 4;
-            const x = ((c.x * span + (reduced ? 0 : t / 1000 * c.speed)) % span) - c.r * 2 + mx * (front ? -18 : -8);
-            const y = c.y * h;
-            for (const [px, py, pr] of c.puffs) {
-                const cx = x + px * c.r * 2.4, cy = y + py * c.r * 0.5, r = c.r * pr;
-                const g = ctx.createRadialGradient(cx, cy, 0, cx, cy, r);
-                const a = night ? (front ? 0.1 : 0.07) : (front ? 0.62 : 0.5);
-                const col = night ? '150,170,220' : '255,250,244';
-                g.addColorStop(0, `rgba(${col},${a})`); g.addColorStop(1, `rgba(${col},0)`);
-                ctx.fillStyle = g;
-                ctx.fillRect(cx - r, cy - r, r * 2, r * 2);
-            }
         }
     }
 
@@ -136,7 +102,7 @@
             for (let q = 0; q < 7; q++) drops.push({ u: 0.5, v: vExit + (Math.random() - 0.5) * 0.034, z: zExit, vu: 0.03 + Math.random() * 0.03, vz: -10 * Math.random(), life: 0 });
         }
         const floor = -T - mainW * 0.42;
-        ctx.fillStyle = '#eaf6ff';
+        ctx.fillStyle = root.classList.contains('night') ? '#eaf6ff' : '#6fb3e0';
         for (let q = drops.length - 1; q >= 0; q--) {
             const d = drops[q];
             d.vz -= mainW * 0.9 * dt; d.u += d.vu * dt; d.z += d.vz * dt; d.life += dt;
@@ -162,7 +128,6 @@
 
         ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
         sky(night, now);
-        cloudLayer(false, night, now);
         PROJECTS.forEach((p, k) => { if (p.depth < 0.6) drawProject(p, k, now); });
 
         const bob = reduced ? 0 : Math.sin(now / 1700) * 6;
@@ -172,7 +137,6 @@
         waterfall(P, H, T, still ? 0 : dt);
 
         PROJECTS.forEach((p, k) => { if (p.depth >= 0.6) drawProject(p, k, now); });
-        cloudLayer(true, night, now);
     }
 
     function tick(now) {
