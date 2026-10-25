@@ -21,14 +21,15 @@
     const hash = Terrain.hash;
 
     // ---------- project details, read from the cards further down the page ----------
+    const tpl = document.getElementById('project-data');
     const projects = labels.map(li => {
-        const id = li.querySelector('a').getAttribute('href');
-        const card = document.querySelector(id);
+        const a = li.querySelector('a'), id = a.dataset.project;
+        const card = tpl ? tpl.content.getElementById(id) : document.getElementById(id);
         const q = sel => card && card.querySelector(sel);
         const media = q('.work-card-image img') || q('.work-card-image video');
         return {
             id,
-            href: q('a.work-card')?.getAttribute('href') || id,
+            href: q('a.work-card')?.getAttribute('href') || a.getAttribute('href'),
             img: media ? (media.tagName === 'VIDEO' ? media.poster : media.getAttribute('src')) : '',
             alt: media?.getAttribute('alt') || media?.getAttribute('aria-label') || '',
             meta: (() => {
@@ -61,7 +62,7 @@
             <h3 class="sd-title"></h3>
             <p class="sd-authors"></p>
             <p class="sd-blurb"></p>
-            <p class="sd-links"><a class="sd-open" target="_blank" rel="noopener">Open project <span aria-hidden="true">↗</span></a><a class="sd-jump">See the full card <span aria-hidden="true">↓</span></a></p>
+            <p class="sd-links"><a class="sd-open" target="_blank" rel="noopener">Open project <span aria-hidden="true">↗</span></a></p>
         </div>
         <canvas class="sd-veil" aria-hidden="true"></canvas>`;
     root.appendChild(panel);
@@ -80,7 +81,6 @@
         $('.sd-authors').hidden = !p.authors;
         $('.sd-blurb').textContent = p.blurb;
         $('.sd-open').href = p.href;
-        $('.sd-jump').href = p.id;
     }
 
     // ---------- layout ----------

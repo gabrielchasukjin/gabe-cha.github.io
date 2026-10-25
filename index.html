@@ -84,16 +84,19 @@
             <nav class="strata reveal" aria-label="Projects">
                 <canvas aria-hidden="true"></canvas>
                 <ol class="strata-labels">
-                    <li><a href="#work-01"><span class="strata-index">01</span><span class="strata-name">SIGCSE 2026 paper</span><span class="strata-meta">Paper · 2026</span></a></li>
-                    <li><a href="#work-02"><span class="strata-index">02</span><span class="strata-name">Cloi</span><span class="strata-meta">Open source · 2025</span></a></li>
-                    <li><a href="#work-03"><span class="strata-index">03</span><span class="strata-name">Speech emotion recognition</span><span class="strata-meta">Research · 2024</span></a></li>
-                    <li><a href="#work-04"><span class="strata-index">04</span><span class="strata-name">DSC 80: Loan Applications</span><span class="strata-meta">Teaching · 2024</span></a></li>
-                    <li><a href="#work-05"><span class="strata-index">05</span><span class="strata-name">N-gram language model</span><span class="strata-meta">Study project · 2023</span></a></li>
+                    <li><a href="https://dl.acm.org/doi/10.1145/3770762.3772619" data-project="work-01" target="_blank" rel="noopener"><span class="strata-index">01</span><span class="strata-name">SIGCSE 2026 paper</span><span class="strata-meta">Paper · 2026</span></a></li>
+                    <li><a href="https://github.com/gabrielchasukjin/cloi" data-project="work-02" target="_blank" rel="noopener"><span class="strata-index">02</span><span class="strata-name">Cloi</span><span class="strata-meta">Open source · 2025</span></a></li>
+                    <li><a href="https://datascience.ucsd.edu/32-undergraduate-scholarships/" data-project="work-03" target="_blank" rel="noopener"><span class="strata-index">03</span><span class="strata-name">Speech emotion recognition</span><span class="strata-meta">Research · 2024</span></a></li>
+                    <li><a href="https://github.com/dsc-courses/dsc80-2026-fa/blob/main/projects/proj02/project.ipynb" data-project="work-04" target="_blank" rel="noopener"><span class="strata-index">04</span><span class="strata-name">DSC 80: Loan Applications</span><span class="strata-meta">Teaching · 2024</span></a></li>
+                    <li><a href="https://github.com/gabrielchasukjin/LanguageModel/blob/main/model.ipynb" data-project="work-05" target="_blank" rel="noopener"><span class="strata-index">05</span><span class="strata-name">N-gram language model</span><span class="strata-meta">Study project · 2023</span></a></li>
                 </ol>
             </nav>
+            <!-- project details: not shown on the page; strata.js reads them into the panel
+                 that opens when a slab is clicked -->
+            <template id="project-data">
             <ul class="work-grid">
                 <li id="work-01">
-                    <a class="work-card reveal" href="https://dl.acm.org/doi/10.1145/3770762.3772619" target="_blank" rel="noopener">
+                    <a class="work-card" href="https://dl.acm.org/doi/10.1145/3770762.3772619" target="_blank" rel="noopener">
                         <div class="work-media">
                             <div class="work-card-image">
                                 <img src="assests/contentgen-hero.png" alt="ContentGen — JupyterLab extension generating a practice question">
@@ -109,7 +112,7 @@
                     </a>
                 </li>
                 <li id="work-02">
-                    <a class="work-card reveal" href="https://github.com/gabrielchasukjin/cloi" target="_blank" rel="noopener">
+                    <a class="work-card" href="https://github.com/gabrielchasukjin/cloi" target="_blank" rel="noopener">
                         <div class="work-media">
                             <div class="work-card-image">
                                 <video src="assests/cloi-demo.mp4" poster="assests/cloi-hero.png" muted loop playsinline preload="metadata" aria-label="Cloi fixing a failing command in the terminal"></video>
@@ -128,7 +131,7 @@
                     </a>
                 </li>
                 <li id="work-03">
-                    <a class="work-card reveal" href="https://datascience.ucsd.edu/32-undergraduate-scholarships/" target="_blank" rel="noopener">
+                    <a class="work-card" href="https://datascience.ucsd.edu/32-undergraduate-scholarships/" target="_blank" rel="noopener">
                         <div class="work-media">
                             <div class="work-card-image">
                                 <img src="assests/ser.png" alt="Speech emotion recognition pipeline">
@@ -143,7 +146,7 @@
                     </a>
                 </li>
                 <li id="work-04">
-                    <a class="work-card reveal" href="https://github.com/dsc-courses/dsc80-2026-fa/blob/main/projects/proj02/project.ipynb" target="_blank" rel="noopener">
+                    <a class="work-card" href="https://github.com/dsc-courses/dsc80-2026-fa/blob/main/projects/proj02/project.ipynb" target="_blank" rel="noopener">
                         <div class="work-media">
                             <div class="work-card-image">
                                 <img src="assests/dsc80-loans.png?v=2" alt="DSC 80 Project 2, Loan Applications: the notebook's title, the interest rate by credit score boxplot students build, and the project's three parts">
@@ -159,7 +162,7 @@
                     </a>
                 </li>
                 <li id="work-05">
-                    <a class="work-card reveal" href="https://github.com/gabrielchasukjin/LanguageModel/blob/main/model.ipynb" target="_blank" rel="noopener">
+                    <a class="work-card" href="https://github.com/gabrielchasukjin/LanguageModel/blob/main/model.ipynb" target="_blank" rel="noopener">
                         <div class="work-media">
                             <div class="work-card-image">
                                 <img src="assests/LM.png" alt="N-gram language model output">
@@ -173,6 +176,7 @@
                     </a>
                 </li>
             </ul>
+            </template>
         </section>
 
         <footer class="site-footer">
@@ -185,7 +189,7 @@
     <script src="island-scene.js?v=9"></script>
     <script src="work-cards.js?v=5"></script>
     <script src="dither.js?v=2"></script>
-    <script src="strata.js?v=3"></script>
+    <script src="strata.js?v=4"></script>
     <script>
         fetch('https://api.github.com/repos/gabrielchasukjin/cloi')
             .then(res => res.json())
