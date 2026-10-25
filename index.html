@@ -33,8 +33,8 @@
 </head>
 <body>
 
-    <!-- the floating islands (island-scene.js); the page slides up over them -->
-    <canvas id="island-scene" class="world" data-islands="projects" aria-hidden="true"></canvas>
+    <!-- the floating island (island-scene.js); the page slides up over it -->
+    <canvas id="island-scene" class="world" aria-hidden="true"></canvas>
 
     <nav class="top-actions" aria-label="Site">
         <button class="theme-toggle" type="button" aria-label="Switch to dark mode" aria-pressed="false"><svg class="icon-moon" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M20.5 14.6A8.5 8.5 0 0 1 9.4 3.5a8.5 8.5 0 1 0 11.1 11.1z"/></svg><svg class="icon-sun" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4.5" fill="currentColor"/><g stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 1.8v2.4M12 19.8v2.4M1.8 12h2.4M19.8 12h2.4M4.8 4.8l1.7 1.7M17.5 17.5l1.7 1.7M4.8 19.2l1.7-1.7M17.5 6.5l1.7-1.7"/></g></svg></button>
@@ -47,12 +47,10 @@
             <h1 class="hero-title">Gabriel Cha</h1>
             <div class="hero-sub">
                 <p>I'm Gabriel, software engineer @ pax ai (YC S24), interested in where tech is heading, crafting and steering harnesses to surface signals from incredibly complex, noisy data and create impactful stories.</p>
-                <p>Curious about how System 1 models can reshape the way code is written, moving beyond strictly deterministic logic by integrating harnesses directly into the code itself, where software is no longer static, but constantly evolving to the needs of the business, clients, and the physical world.</p>
             </div>
             <a href="#intro" class="landing-scroll">Scroll <span aria-hidden="true">↓</span></a>
         </div>
         <p class="hero-caption"><span class="hero-fig">fig. 01</span> a valley in the sky &mdash; <span data-poly-count>4,516</span> polygons, redrawn every frame. drag to turn it.</p>
-        <div class="island-tip" hidden></div>
     </header>
 
     <div class="main-wrapper" id="intro">
@@ -201,9 +199,9 @@
         </footer>
     </div>
 
-    <script src="terrain.js?v=2"></script>
-    <script src="island-scene.js?v=4"></script>
-    <script src="now-island.js?v=1"></script>
+    <script src="terrain.js?v=3"></script>
+    <script src="island-scene.js?v=5"></script>
+    <script src="now-island.js?v=2"></script>
     <script src="work-cards.js?v=5"></script>
     <script src="strata.js?v=2"></script>
     <script>

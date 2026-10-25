@@ -192,6 +192,98 @@ window.Terrain = (() => {
         return { def, N, hs, hAt, base, gx, gy, rough, order: null, orderTheta: NaN };
     }
 
+    // ---------- underside mesh ----------
+    // Built once per island in grid space (u, v in -0.5..0.5, z in units of W): rings that start
+    // at the walls' rough bottom edge and close in toward a few hanging points. Each facet keeps
+    // its own soil, clay or rock color; lighting and sorting happen per frame.
+    const SOIL = ['#3b2a1e', '#5a3f2b', '#7a5638', '#94704d', '#6b5240', '#4a3a2e'].map(hex);
+    const STONE = hex('#77736b'), STONE2 = hex('#a39d92'), ROOT = hex('#2a1d14'), MOSS = hex('#4f6b34');
+
+    function buildUnderside(p, depth) {
+        const { N, rough, def } = p, s = def.seed;
+        const K = Math.max(14, Math.round(N * 0.8)), AR = 4 * K, RINGS = 18, T = 0.055;
+        const verts = new Float32Array((RINGS + 1) * AR * 3);
+        for (let i = 0; i < AR; i++) {
+            const e = (i / K) | 0, f = (i % K) / K;
+            let u, v, t;
+            if (e === 0) { u = -0.5 + f; v = -0.5; t = Math.round(f * N); }
+            else if (e === 1) { u = 0.5; v = -0.5 + f; t = Math.round(f * N); }
+            else if (e === 2) { u = 0.5 - f; v = 0.5; t = Math.round((1 - f) * N); }
+            else { u = -0.5; v = 0.5 - f; t = Math.round((1 - f) * N); }
+            const z0 = -T * rough[e * (N + 1) + t];
+            const len = Math.hypot(u, v), cu = u / len * 0.46, cv = v / len * 0.46;
+            const a = i / AR * Math.PI * 2;
+            // a few long drips and many short ones, set by where you are around the rim
+            const lobes = 0.55 + 0.75 * Math.pow(fbm(Math.cos(a) * 1.6 + 5, Math.sin(a) * 1.6, s + 41, 3), 1.6) * 1.6;
+            for (let j = 0; j <= RINGS; j++) {
+                const r = j / RINGS, sr = smooth(r);
+                const wob = 1 + 0.16 * (fbm(i / AR * 22, r * 5, s + 43, 3) - 0.5) * (0.4 + r);
+                const sc = j === RINGS ? 0 : (0.03 + 0.97 * Math.pow(1 - r, 0.9)) * wob;   // last ring closes on the axis
+                const q = (j * AR + i) * 3;
+                verts[q] = (u + (cu - u) * sr) * sc;
+                verts[q + 1] = (v + (cv - v) * sr) * sc;
+                const bump = (vnoise(i / AR * 60, r * 14, s + 45) - 0.5) * 0.018 * (1 - r * 0.5);
+                // the first ring tucks up inside the wall so no seam shows between them
+                verts[q + 2] = j === 0 ? z0 + T * 0.6 : z0 + (-T - depth * lobes - z0) * Math.pow(r, 0.82) + bump;
+            }
+        }
+        const quads = [];
+        const V = (i, j) => ((j * AR + ((i + AR) % AR)) * 3);
+        const normal = (i, j) => {
+            const a = V(i, j), b = V(i + 1, j), c = V(i + 1, j + 1), d = V(i, j + 1);
+            const ex = [verts[c] - verts[a], verts[c + 1] - verts[a + 1], verts[c + 2] - verts[a + 2]];
+            const ey = [verts[d] - verts[b], verts[d + 1] - verts[b + 1], verts[d + 2] - verts[b + 2]];
+            return [ex[1] * ey[2] - ex[2] * ey[1], ex[2] * ey[0] - ex[0] * ey[2], ex[0] * ey[1] - ex[1] * ey[0]];
+        };
+        // the winding is the same everywhere, so one well-shaped facet decides which way is out
+        const probe = normal(K >> 1, RINGS >> 1), pc = V(K >> 1, RINGS >> 1);
+        const flip = probe[0] * verts[pc] + probe[1] * verts[pc + 1] < 0 ? -1 : 1;
+        for (let j = 0; j < RINGS; j++) for (let i = 0; i < AR; i++) {
+            const a = V(i, j), b = V(i + 1, j), c = V(i + 1, j + 1), d = V(i, j + 1);
+            let n = normal(i, j).map(x => x * flip);
+            const m = Math.hypot(...n) || 1;
+            n = n.map(x => x / m);
+            const r = (j + 0.5) / RINGS;
+            // soil strata by depth, broken up by noise; stone outcrops, root lines, moss at the lip
+            const band = r * 1.9 + 0.55 * fbm(i / AR * 9, r * 3, s + 47, 4);
+            let col = ramp(SOIL, band - Math.floor(band));
+            const rock = vnoise(i / AR * 26, r * 9, s + 49);
+            if (rock > 0.66) col = mix(col, mix(STONE, STONE2, hash(i, j, s + 51)), clamp01((rock - 0.66) * 5));
+            if (j < 4 && hash(i, j, s + 53) > 0.86) col = mix(col, ROOT, 0.7);
+            if (j === 0 && hash(i, 3, s + 55) > 0.55) col = mix(col, MOSS, 0.6);
+            const grain = 0.78 + 0.42 * hash(i, j, s + 57);
+            quads.push({ a, b, c, d, n, col, k: grain * (1 - 0.28 * r), tri: j >= RINGS - 6 });
+        }
+        return { verts, quads, depth };
+    }
+
+    const FILL = (() => { const l = [-0.45, 0.8, 0.12], m = Math.hypot(...l); return l.map(x => x / m); })();
+
+    function drawUnderside(g, p, depth, P, cs, sn, W, poly) {
+        if (!p.under || p.under.depth !== depth) p.under = buildUnderside(p, depth);
+        const { verts, quads } = p.under;
+        const VIEW_Z = 0.357;     // view direction (1, 1, 0.357) in this projection
+        const list = [];
+        for (const f of quads) {
+            const nx = f.n[0] * cs - f.n[1] * sn, ny = f.n[0] * sn + f.n[1] * cs, nz = f.n[2];
+            const away = nx + ny + nz * VIEW_Z <= 0;                // drawn anyway (dark) so folds never show a gap
+            const ax = verts[f.a] * cs - verts[f.a + 1] * sn, ay = verts[f.a] * sn + verts[f.a + 1] * cs;
+            const cx = verts[f.c] * cs - verts[f.c + 1] * sn, cy = verts[f.c] * sn + verts[f.c + 1] * cs;
+            const dep = (ax + ay + cx + cy) / 2 + (verts[f.a + 2] + verts[f.c + 2]) / 2 * VIEW_Z;
+            const lit = away ? 0.22 : 0.3 + 0.78 * Math.max(0, nx * FILL[0] + ny * FILL[1] + nz * FILL[2]);
+            list.push([dep, f, lit]);
+        }
+        list.sort((x, y) => x[0] - y[0]);
+        const pt = q => P(verts[q], verts[q + 1], verts[q + 2] * W);
+        for (const [, f, lit] of list) {
+            const fill = rgb(f.col, lit * f.k);
+            // near the tips the rings twist, so split those facets into triangles (no bow-ties)
+            if (f.tri) { const A = pt(f.a), C = pt(f.c); poly([A, pt(f.b), C], fill); poly([A, C, pt(f.d)], fill); }
+            else poly([pt(f.a), pt(f.b), pt(f.c), pt(f.d)], fill);
+        }
+        return list.length;
+    }
+
     // ---------- draw ----------
     // o: { x, y, W, theta (radians, added to the style's own spin), tilt, underside (0..), fragments, dpr }
     function draw(g, p, o) {
@@ -225,28 +317,9 @@ window.Terrain = (() => {
         const faces = e => depth(e.n[0], e.n[1]) > 0;
         const bottomZ = (e, t) => -T * rough[e.id * (N + 1) + t];
 
-        // hanging rock underside: a ring of facets narrowing to a point, drawn first
-        if (o.underside) {
-            const D = o.underside * W, seg = Math.max(4, Math.round(N / 7));
-            const facets = [];
-            const tip = [0, 0, -T - D];
-            for (const e of EDGES) {
-                for (let t0 = 0; t0 < N; t0 += seg) {
-                    const t1 = Math.min(N, t0 + seg), tm = (t0 + t1) / 2;
-                    const [ia, ja] = e.at(tm);
-                    const r = 0.38 + 0.22 * hash(e.id, t0, s + 21);
-                    const inner = [gu(ia) * r, gu(ja) * r, -T - D * (0.42 + 0.3 * hash(t0, e.id, s + 22))];
-                    const rim = [];
-                    for (let t = t0; t <= t1; t++) { const [i, j] = e.at(t); rim.push([gu(i), gu(j), bottomZ(e, t)]); }
-                    const lit = 0.5 + 0.4 * Math.max(0, -(e.n[0] * cs - e.n[1] * sn) * 0.7 + 0.3);
-                    facets.push({ pts: [...rim, inner], k: lit * (0.85 + 0.25 * hash(t0, e.id, s + 23)), d: depth(gu(ia), gu(ja)) });
-                    facets.push({ pts: [rim[rim.length - 1], inner, tip], k: lit * 0.62, d: depth(gu(ia), gu(ja)) * 0.6 });
-                    facets.push({ pts: [rim[0], inner, tip], k: lit * 0.55, d: depth(gu(ia), gu(ja)) * 0.6 });
-                }
-            }
-            facets.sort((a, b) => a.d - b.d);
-            for (const f of facets) poly(f.pts.map(q => P(q[0], q[1], q[2])), rgb(wall, f.k));
-        }
+        // hanging underside: a textured mesh of earth and rock tapering to a few points
+        let polys = 0;
+        if (o.underside) polys += drawUnderside(g, p, o.underside, P, cs, sn, W, poly);
 
         // top surface, back to front (re-sorted only when the angle changes)
         if (p.orderTheta !== th) {
@@ -305,13 +378,14 @@ window.Terrain = (() => {
             poly([P(u + r, v - r, z + hgt), P(u + r, v + r, z + hgt), P(u + r, v + r, z), P(u + r, v - r, z)], rgb(wall, 0.65));
             poly([P(u - r, v - r, z + hgt), P(u + r, v - r, z + hgt), P(u + r, v + r, z + hgt), P(u - r, v + r, z + hgt)], rgb(surf, 0.95));
         }
-        return { P, H, T };
+        polys += N * N + front.length * N * 6 + frags * 3;
+        return { P, H, T, polys };
     }
 
     // ---------- bitmap: draw once into an offscreen canvas ----------
     function bitmap(p, W, dpr, o = {}) {
         const A = W / 2 / SIZE, B = A * (o.tilt || 0.4), H = p.def.relief * W, T = 0.055 * W;
-        const D = (o.underside || 0) * W;
+        const D = (o.underside || 0) * W * 1.8;
         const pad = 0.06 * W;
         const halfW = A * 1.02 + pad;
         const up = B * 1.02 + H * 1.1 + pad, down = B * 1.02 + T * 2 + D + pad;
