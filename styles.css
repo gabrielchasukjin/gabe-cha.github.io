@@ -2309,38 +2309,123 @@ html.night .strata-detail.sd-show .sd-cloud {
 }
 
 
+/* ---------- Intro: photo on the left; name, tagline, bio, and credentials on the right ---------- */
 
-/* ---------- Home header without the island: name and bio sit in the portrait's column ---------- */
-
-.landing.landing-plain {
-    height: auto;
-    min-height: 0;
-    display: flex;
-    justify-content: center;
-    padding: 150px 24px 10px;
-    cursor: auto;
-}
-
-.landing-plain .hero-copy {
-    --col: 480px;
-    position: static;
+.intro {
     width: 100%;
-    max-width: 1080px;
+    max-width: 1060px;
+    margin: 110px auto 0;
+    display: grid;
+    grid-template-columns: minmax(0, 440px) minmax(0, 1fr);
+    gap: 64px;
+    align-items: center;
 }
 
-.landing-plain .hero-copy > * {
-    max-width: 480px;
+.intro .hero-portrait {
+    width: 100%;
 }
 
-.landing-plain + .main-wrapper::before {
-    display: none;
+.intro-name {
+    font-family: var(--serif);
+    font-size: clamp(2.8rem, 5vw, 4.2rem);
+    font-weight: 500;
+    line-height: 1;
+    letter-spacing: -0.03em;
+    color: var(--ink-strong);
+    margin: 10px 0 12px;
+}
+
+.intro-tagline {
+    font-family: var(--serif);
+    font-size: 1.35rem;
+    font-style: italic;
+    color: var(--ink-muted);
+    margin-bottom: 22px;
+}
+
+.intro-bio {
+    font-size: 1.04rem;
+    line-height: 1.65;
+    color: var(--ink);
+    text-wrap: pretty;
+    max-width: 540px;
+}
+
+.intro-facts {
+    margin-top: 28px;
+    padding-top: 22px;
+    border-top: 1px solid var(--rule);
+    display: grid;
+    gap: 12px;
+    max-width: 540px;
+}
+
+.intro-facts > div {
+    display: grid;
+    grid-template-columns: 64px 1fr;
+    gap: 16px;
+    align-items: baseline;
+}
+
+.intro-facts dt {
+    font-family: var(--mono);
+    font-size: 0.74rem;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: var(--ink-faint);
+}
+
+.intro-facts dd {
+    margin: 0;
+    font-size: 0.96rem;
+    line-height: 1.55;
+    color: var(--ink);
+}
+
+.intro-facts dd a {
+    color: var(--ink-strong);
+    font-weight: 500;
+    text-decoration: underline;
+    text-decoration-color: var(--rule);
+    text-underline-offset: 3px;
+}
+
+.intro-facts dd a:hover {
+    color: var(--accent);
+    text-decoration-color: currentColor;
+}
+
+.intro-facts .affiliations {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px 22px;
+    margin: 0;
+}
+
+.intro-facts .affiliation,
+.intro-facts .affiliation:hover {
+    text-decoration: none;
+    font-weight: 400;
+}
+
+.intro + .work-section {
+    margin-top: 110px;
 }
 
 @media (max-width: 900px) {
-    .landing.landing-plain {
-        padding: 110px 16px 28px;
+    .intro {
+        grid-template-columns: 1fr;
+        gap: 28px;
+        margin-top: 88px;
     }
-    .landing-plain .hero-copy > * {
-        max-width: none;
+    .intro .hero-portrait {
+        max-width: 520px;
+    }
+    .intro-facts > div {
+        grid-template-columns: 56px 1fr;
+        gap: 12px;
+    }
+    .intro + .work-section {
+        margin-top: 72px;
     }
 }

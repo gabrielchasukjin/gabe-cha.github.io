@@ -29,7 +29,7 @@
     <link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700&family=Source+Serif+4:opsz,wght@8..60,400;8..60,500;8..60,600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
     <script src="theme.js?v=1"></script>
     <script>document.documentElement.classList.add('js');</script>
-    <link rel="stylesheet" href="styles.css?v=89">
+    <link rel="stylesheet" href="styles.css?v=90">
 </head>
 <body>
 
@@ -39,41 +39,42 @@
         <a href="about.html" class="pill-link">About me <span aria-hidden="true">→</span></a>
     </nav>
 
-    <header class="landing landing-plain">
-        <div class="hero-copy">
-            <p class="hero-eyebrow">Portfolio &middot; San Francisco</p>
-            <h1 class="hero-title">Gabriel Cha</h1>
-            <div class="hero-sub">
-                <p>I'm Gabriel, software engineer @ pax ai (YC S24), interested in where tech is heading, crafting and steering harnesses to surface signals from incredibly complex, noisy data and create impactful stories.</p>
-            </div>
-        </div>
-    </header>
-
     <div class="main-wrapper" id="intro">
-        <div class="container reveal">
+        <!-- who I am: photo on the left; name, tagline, bio, and credentials on the right -->
+        <section class="intro reveal" aria-label="About Gabriel">
             <div class="hero-portrait">
                 <img src="assests/hero.jpg" alt="Gabriel Cha — portrait at the beach">
             </div>
-            <div class="content">
-
-                <p class="bio">i like to think, explain, build.</p>
-
-                <p class="bio">agentic harnesses that reason, search the web, and synthesize information fascinate me. so does fine-tuning llms on a100s to push quality on narrow tasks.</p>
-
-                <div class="affiliations">
-                    <a class="affiliation" href="https://www.columbia.edu/" target="_blank" aria-label="Columbia University — Master's">
-                        <img src="assests/columbia-logo.jpg" alt="Columbia University">
-                        <span class="affiliation-meta">M.S. Data Science, Columbia</span>
-                    </a>
-                    <a class="affiliation" href="https://ucsd.edu/" target="_blank" aria-label="UC San Diego — Bachelor's">
-                        <img src="assests/ucsd-logo.jpg" alt="UC San Diego">
-                        <span class="affiliation-meta">B.S. Data Science, UC San Diego</span>
-                    </a>
-                </div>
+            <div class="intro-text">
+                <p class="hero-eyebrow">Portfolio &middot; San Francisco</p>
+                <h1 class="intro-name">Gabriel Cha</h1>
+                <p class="intro-tagline">i like to think, explain, build.</p>
+                <p class="intro-bio">I'm Gabriel, software engineer @ pax ai (YC S24), interested in where tech is heading, crafting and steering harnesses to surface signals from incredibly complex, noisy data and create impactful stories.</p>
+                <dl class="intro-facts">
+                    <div>
+                        <dt>Now</dt>
+                        <dd>Software engineer at <a href="https://paxai.com/" target="_blank" rel="noopener">Pax</a> (<a href="https://www.ycombinator.com/companies/pax" target="_blank" rel="noopener">YC S24</a>)</dd>
+                    </div>
+                    <div>
+                        <dt>Before</dt>
+                        <dd>AI/ML engineer at <a href="https://www.honeywell.com/" target="_blank" rel="noopener">Honeywell</a> and <a href="https://rootaccess.ai/" target="_blank" rel="noopener">Root Access</a> (backed by <a href="https://alleycorp.com/" target="_blank" rel="noopener">AlleyCorp</a>); data scientist at <a href="https://www.edison.com/" target="_blank" rel="noopener">Edison</a></dd>
+                    </div>
+                    <div>
+                        <dt>Study</dt>
+                        <dd class="affiliations">
+                            <a class="affiliation" href="https://www.columbia.edu/" target="_blank" aria-label="Columbia University — Master's">
+                                <img src="assests/columbia-logo.jpg" alt="Columbia University">
+                                <span class="affiliation-meta">M.S. Data Science, Columbia</span>
+                            </a>
+                            <a class="affiliation" href="https://ucsd.edu/" target="_blank" aria-label="UC San Diego — Bachelor's">
+                                <img src="assests/ucsd-logo.jpg" alt="UC San Diego">
+                                <span class="affiliation-meta">B.S. Data Science, UC San Diego</span>
+                            </a>
+                        </dd>
+                    </div>
+                </dl>
             </div>
-        </div>
-
-        <p class="experience reveal">Software engineer at <a href="https://paxai.com/" target="_blank" rel="noopener">Pax</a> (<a href="https://www.ycombinator.com/companies/pax" target="_blank" rel="noopener">YC S24</a>). Previously an AI/ML engineer at <a href="https://www.honeywell.com/" target="_blank" rel="noopener">Honeywell</a> and <a href="https://rootaccess.ai/" target="_blank" rel="noopener">Root Access</a> (backed by <a href="https://alleycorp.com/" target="_blank" rel="noopener">AlleyCorp</a>), and a data scientist at <a href="https://www.edison.com/" target="_blank" rel="noopener">Edison</a>.</p>
+        </section>
 
         <section class="work-section">
             <h2 class="reveal">Selected work</h2>
