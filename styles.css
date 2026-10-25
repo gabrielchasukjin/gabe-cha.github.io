@@ -2132,3 +2132,159 @@ html.night {
 .hero-portrait.dots-done .portrait-dots {
     opacity: 0;
 }
+
+/* ---------- Strata: a slab dissolves into its project's details (strata.js) ---------- */
+
+.strata-labels {
+    transition: opacity 0.35s ease;
+}
+
+.strata.is-open .strata-labels {
+    opacity: 0;
+    pointer-events: none;
+}
+
+.strata-detail {
+    position: absolute;
+    left: 0;
+    right: 0;
+    z-index: 2;
+    display: grid;
+    grid-template-columns: minmax(0, 0.95fr) minmax(0, 1.05fr);
+    gap: 40px;
+    align-items: center;
+    padding: 28px;
+    border-radius: 16px;
+    background: var(--bg);
+    box-shadow: none;
+    transition: box-shadow 0.4s ease;
+}
+
+.strata-detail.sd-ready {
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05), 0 18px 48px rgba(11, 16, 34, 0.1);
+}
+
+.strata-detail[hidden] {
+    display: none;
+}
+
+html.night .strata-detail.sd-ready {
+    box-shadow: 0 0 0 1px var(--rule), 0 18px 48px rgba(0, 0, 0, 0.4);
+}
+
+.sd-media {
+    aspect-ratio: 16 / 10;
+    overflow: hidden;
+    border-radius: 10px;
+    background: var(--bg-soft);
+}
+
+.sd-media img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+}
+
+.sd-meta,
+.sd-authors {
+    font-family: var(--mono);
+    font-size: 0.76rem;
+    color: var(--ink-faint);
+}
+
+.sd-honor {
+    margin-top: 8px;
+    font-size: 0.86rem;
+    color: var(--accent);
+}
+
+.sd-title {
+    margin: 8px 0 6px;
+    font-family: var(--sans);
+    font-size: 1.4rem;
+    font-weight: 600;
+    line-height: 1.25;
+    letter-spacing: -0.01em;
+    color: var(--ink-strong);
+}
+
+.sd-blurb {
+    margin-top: 12px;
+    font-size: 0.98rem;
+    line-height: 1.62;
+    color: var(--ink);
+    text-wrap: pretty;
+}
+
+.sd-links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 18px;
+    margin-top: 18px;
+    font-size: 0.92rem;
+    font-weight: 500;
+}
+
+.sd-links a {
+    color: var(--ink-strong);
+    text-decoration: underline;
+    text-decoration-color: var(--rule);
+    text-underline-offset: 4px;
+}
+
+.sd-links a:hover {
+    color: var(--accent);
+    text-decoration-color: currentColor;
+}
+
+.strata-close {
+    position: absolute;
+    top: 10px;
+    right: 12px;
+    width: 34px;
+    height: 34px;
+    border: none;
+    border-radius: 50%;
+    background: var(--bg-soft);
+    color: var(--ink-strong);
+    font-size: 1.3rem;
+    line-height: 1;
+    cursor: pointer;
+}
+
+.strata-close:hover {
+    background: var(--rule);
+}
+
+.strata-close:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
+}
+
+.sd-veil {
+    position: absolute;
+    inset: -1px;
+    width: calc(100% + 2px);
+    height: calc(100% + 2px);
+    pointer-events: none;
+    border-radius: 16px;
+}
+
+html.night .strata-detail .sd-media {
+    background: #121833;
+}
+
+@media (max-width: 640px) {
+    .strata-detail {
+        grid-template-columns: 1fr;
+        gap: 16px;
+        padding: 18px;
+    }
+    .sd-title {
+        font-size: 1.15rem;
+    }
+    .sd-blurb {
+        font-size: 0.92rem;
+    }
+}

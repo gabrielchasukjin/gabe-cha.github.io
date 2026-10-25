@@ -12,6 +12,7 @@
     const tip = document.querySelector('.island-tip');
     const countEl = document.querySelector('[data-poly-count]');
     const withProjects = canvas.dataset.islands === 'projects';
+    const besideCopy = !!document.querySelector('.hero-copy');   // homepage: island sits right of the text
     const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     const root = document.documentElement;
 
@@ -49,9 +50,9 @@
         canvas.width = Math.round(w * dpr);
         canvas.height = Math.round(h * dpr);
         const narrow = w < 700;
-        mainW = narrow ? Math.min(w * 0.6, h * 0.3) : Math.min(w * 0.44, h * 0.78, 660);
-        mainX = narrow ? w * 0.5 : withProjects ? w * 0.63 : w * 0.5;
-        mainY = narrow ? h * 0.17 : withProjects ? h * 0.42 : h * 0.36;
+        mainW = narrow ? Math.min(w * (withProjects ? 0.6 : 0.78), h * (withProjects ? 0.3 : 0.34)) : Math.min(w * 0.46, h * 0.8, 680);
+        mainX = narrow || !besideCopy ? w * 0.5 : w * 0.64;
+        mainY = narrow ? h * (withProjects ? 0.17 : 0.2) : besideCopy ? h * 0.38 : h * 0.34;
         for (const p of PROJECTS) {
             const [fx, fy, size, depth, spin] = narrow ? p.m : p.d;
             p.depth = depth;
