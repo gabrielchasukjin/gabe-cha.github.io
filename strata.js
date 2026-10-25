@@ -66,6 +66,25 @@
         </div>
         <canvas class="sd-veil" aria-hidden="true"></canvas>`;
     root.appendChild(panel);
+    // a soft, borderless "ghost" behind the panel: feathered edges that drift like smoke
+    const cloud = document.createElement('div');
+    cloud.className = 'sd-cloud';
+    cloud.setAttribute('aria-hidden', 'true');
+    panel.prepend(cloud);
+    if (!document.getElementById('sd-gas')) {
+        const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+        svg.setAttribute('width', '0'); svg.setAttribute('height', '0');
+        svg.setAttribute('aria-hidden', 'true');
+        svg.style.position = 'absolute';
+        svg.innerHTML = `<filter id="sd-gas" x="-25%" y="-25%" width="150%" height="150%">
+            <feTurbulence type="fractalNoise" baseFrequency="0.011 0.018" numOctaves="2" seed="7" result="n">
+                ${reduced ? '' : '<animate attributeName="baseFrequency" dur="16s" values="0.011 0.018;0.016 0.012;0.011 0.018" repeatCount="indefinite"/>'}
+            </feTurbulence>
+            <feDisplacementMap in="SourceGraphic" in2="n" scale="46" xChannelSelector="R" yChannelSelector="G"/>
+            <feGaussianBlur stdDeviation="3"/>
+        </filter>`;
+        document.body.appendChild(svg);
+    }
     const veil = panel.querySelector('.sd-veil'), vctx = veil.getContext('2d');
     const $ = sel => panel.querySelector(sel);
 
@@ -146,7 +165,7 @@
             if (left < -0.12) continue;
             let a = 1, dy = 0;
             if (left < 0) { const f = -left / 0.12; a = 1 - f; dy = -f * 14; }
-            ctx.globalAlpha = a * (1 - 0.92 * state[k].fade);
+            ctx.globalAlpha = a * (1 - 0.72 * state[k].fade);
             ctx.drawImage(s.canvas, b.bx * src, b.by * src, src, src, x0 + b.bx * BS, y0 + b.by * BS + dy, BS, BS);
         }
         ctx.globalAlpha = 1;
@@ -160,8 +179,11 @@
         for (let k = slabs.length - 1; k >= 0; k--) {
             const s = slabs[k], y = centerY(k, now), st = state[k];
             const dim = open < 0 && hovered >= 0 && hovered !== k;
-            ctx.globalAlpha = (dim ? 0.38 : 1) * (1 - 0.92 * st.fade);
+            ctx.globalAlpha = (dim ? 0.38 : 1) * (1 - 0.72 * st.fade);
+            // the rest of the stack greys out and softens behind the open panel
+            if (st.fade > 0.01) ctx.filter = `grayscale(${st.fade.toFixed(2)}) blur(${(st.fade * 2.2).toFixed(1)}px)`;
             drawSlab(s, k, y);
+            ctx.filter = 'none';
             // leader line from the slab's right corner to its label
             ctx.globalAlpha = (hovered === k ? 0.9 : 0.35) * (0.4 + 0.6 * spread) * (1 - st.fade) * (1 - st.dis);
             ctx.strokeStyle = ink;
@@ -207,7 +229,7 @@
             state[k].dis = clamp01(t / 620);
             state.forEach((st, i) => { if (i !== k) st.fade = ease(t / 500); });
             // the slab breaks up first; then the details assemble where it was
-            if (t >= 480 && panel.style.visibility) panel.style.visibility = '';
+            if (t >= 480 && panel.style.visibility) { panel.style.visibility = ''; panel.classList.add('sd-show'); }
             drawVeil(1 - clamp01((t - 500) / 760));
             if (t >= 1000) panel.classList.add('sd-ready');
             if (t >= OPEN_MS) { drawVeil(0); anim = null; }
@@ -236,7 +258,7 @@
         if (reduced) {
             state.forEach((st, i) => { st.dis = i === k ? 1 : 0; st.fade = i === k ? 0 : 1; });
             drawVeil(0);
-            panel.classList.add('sd-ready');
+            panel.classList.add('sd-ready', 'sd-show');
         } else {
             drawVeil(1);
             panel.style.visibility = 'hidden';
@@ -257,7 +279,7 @@
             labels[k].querySelector('a').focus({ preventScroll: true });
             return;
         }
-        panel.classList.remove('sd-ready');
+        panel.classList.remove('sd-ready', 'sd-show');
         anim = { k, dir: -1, t0: performance.now() };
         labels[k].querySelector('a').focus({ preventScroll: true });
         kick();
