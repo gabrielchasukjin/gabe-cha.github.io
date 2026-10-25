@@ -29,26 +29,23 @@
     <link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700&family=Source+Serif+4:opsz,wght@8..60,400;8..60,500;8..60,600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
     <script src="theme.js?v=1"></script>
     <script>document.documentElement.classList.add('js');</script>
-    <link rel="stylesheet" href="styles.css?v=88">
+    <link rel="stylesheet" href="styles.css?v=89">
 </head>
 <body>
 
-    <!-- the floating island (island-scene.js); the page slides up over it -->
-    <canvas id="island-scene" class="world" aria-hidden="true"></canvas>
 
     <nav class="top-actions" aria-label="Site">
         <button class="theme-toggle" type="button" aria-label="Switch to dark mode" aria-pressed="false"><svg class="icon-moon" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M20.5 14.6A8.5 8.5 0 0 1 9.4 3.5a8.5 8.5 0 1 0 11.1 11.1z"/></svg><svg class="icon-sun" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4.5" fill="currentColor"/><g stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 1.8v2.4M12 19.8v2.4M1.8 12h2.4M19.8 12h2.4M4.8 4.8l1.7 1.7M17.5 17.5l1.7 1.7M4.8 19.2l1.7-1.7M17.5 6.5l1.7-1.7"/></g></svg></button>
         <a href="about.html" class="pill-link">About me <span aria-hidden="true">→</span></a>
     </nav>
 
-    <header class="landing">
+    <header class="landing landing-plain">
         <div class="hero-copy">
             <p class="hero-eyebrow">Portfolio &middot; San Francisco</p>
             <h1 class="hero-title">Gabriel Cha</h1>
             <div class="hero-sub">
                 <p>I'm Gabriel, software engineer @ pax ai (YC S24), interested in where tech is heading, crafting and steering harnesses to surface signals from incredibly complex, noisy data and create impactful stories.</p>
             </div>
-            <p class="hero-caption"><span class="hero-fig">fig. 01</span> a valley in the sky &mdash; <span data-poly-count>4,516</span> polygons, redrawn every frame. drag to turn it.</p>
         </div>
     </header>
 
@@ -186,7 +183,6 @@
     </div>
 
     <script src="terrain.js?v=4"></script>
-    <script src="island-scene.js?v=10"></script>
     <script src="work-cards.js?v=5"></script>
     <script src="dither.js?v=2"></script>
     <script src="strata.js?v=6"></script>

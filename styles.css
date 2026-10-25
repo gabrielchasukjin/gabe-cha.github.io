@@ -2308,3 +2308,39 @@ html.night .strata-detail.sd-show .sd-cloud {
     opacity: 0.94;
 }
 
+
+
+/* ---------- Home header without the island: name and bio sit in the portrait's column ---------- */
+
+.landing.landing-plain {
+    height: auto;
+    min-height: 0;
+    display: flex;
+    justify-content: center;
+    padding: 150px 24px 10px;
+    cursor: auto;
+}
+
+.landing-plain .hero-copy {
+    --col: 480px;
+    position: static;
+    width: 100%;
+    max-width: 1080px;
+}
+
+.landing-plain .hero-copy > * {
+    max-width: 480px;
+}
+
+.landing-plain + .main-wrapper::before {
+    display: none;
+}
+
+@media (max-width: 900px) {
+    .landing.landing-plain {
+        padding: 110px 16px 28px;
+    }
+    .landing-plain .hero-copy > * {
+        max-width: none;
+    }
+}
