@@ -1,8 +1,7 @@
 // Dither: one dot language across the page, borrowed from ordered (Bayer) dithering.
-//  1. The edge where the page slides over the island breaks up into dots instead of a fade.
-//  2. Project images sit as one-color dot patterns until you hover (or, on touch, until the
+//  1. Project images sit as one-color dot patterns until you hover (or, on touch, until the
 //     card is in view), then the real image shows through.
-//  3. The portrait arrives as coarse color dots that sharpen into the illustration.
+//  2. The portrait arrives as coarse color dots that sharpen into the illustration.
 // Everything is drawn once per size and theme; nothing here runs per frame except the
 // portrait's short reveal.
 
@@ -27,21 +26,6 @@
     })();
     const bayer = (x, y) => BAYER[y & 7][x & 7];
     const css = name => getComputedStyle(root).getPropertyValue(name).trim();
-
-    // ---------- 1. the dot-dissolve edge ----------
-    function edge() {
-        const B = 4, cols = 64, rows = 40;          // 4px dots, 160px tall, tiles sideways
-        const c = document.createElement('canvas');
-        c.width = cols * B; c.height = rows * B;
-        const g = c.getContext('2d');
-        g.fillStyle = '#000';
-        for (let y = 0; y < rows; y++) {
-            const t = Math.pow((y + 0.5) / rows, 1.15);
-            for (let x = 0; x < cols; x++) if (t > bayer(x, y)) g.fillRect(x * B, y * B, B, B);
-        }
-        root.style.setProperty('--dither-edge', `url(${c.toDataURL()})`);
-        root.classList.add('dither-edge');
-    }
 
     // ---------- shared: sample an image at one value per dot ----------
     // fit: 'cover' crops like object-fit: cover; returns RGBA for a cols x rows grid
@@ -167,7 +151,6 @@
     }
 
     // ---------- go ----------
-    edge();
     setupCards();
     setupPortrait();
     let rt;

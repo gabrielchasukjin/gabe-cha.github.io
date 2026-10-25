@@ -2096,19 +2096,7 @@ html.night {
     --dot-ink: #c9d3f2;
 }
 
-/* 1. the page's top edge breaks up into dots over the island instead of fading */
-html.dither-edge .main-wrapper::before {
-    height: 160px;
-    background: var(--bg);
-    -webkit-mask-image: var(--dither-edge);
-    mask-image: var(--dither-edge);
-    -webkit-mask-repeat: repeat-x;
-    mask-repeat: repeat-x;
-    -webkit-mask-size: auto 100%;
-    mask-size: auto 100%;
-}
-
-/* 2 & 3. a dot layer laid over an image */
+/* a dot layer laid over an image */
 .dither-layer {
     position: absolute;
     inset: 0;
