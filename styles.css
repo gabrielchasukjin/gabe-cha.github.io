@@ -2183,7 +2183,7 @@ html.night {
     display: none;
 }
 
-html.night .sd-media {
+.sd-media {
     aspect-ratio: 16 / 10;
     overflow: hidden;
     border-radius: 10px;
@@ -2275,19 +2275,21 @@ html.night .strata-detail .sd-media {
     }
 }
 
-/* the panel image dissolves at its edges too, so nothing in the ghost has a hard border */
+/* the panel image stays raw: square corners, no fade, nothing cropped */
 .strata-detail .sd-media {
+    aspect-ratio: auto;
     border-radius: 0;
     background: transparent;
 }
 
 .strata-detail .sd-media img {
-    -webkit-mask-image: linear-gradient(to right, transparent, #000 48px, #000 calc(100% - 48px), transparent),
-                        linear-gradient(to bottom, transparent, #000 40px, #000 calc(100% - 40px), transparent);
-    -webkit-mask-composite: source-in;
-    mask-image: linear-gradient(to right, transparent, #000 48px, #000 calc(100% - 48px), transparent),
-                linear-gradient(to bottom, transparent, #000 40px, #000 calc(100% - 40px), transparent);
-    mask-composite: intersect;
+    height: auto;
+    object-fit: contain;
+}
+
+.strata-detail .sd-media img {
+    -webkit-mask-image: none;
+    mask-image: none;
 }
 
 
