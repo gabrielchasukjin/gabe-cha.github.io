@@ -1955,7 +1955,7 @@ html:not(.js) .strata {
     position: absolute;
     left: 6vw;
     bottom: 17vh;
-    max-width: 500px;
+    max-width: 520px;
     color: var(--ink-strong);
 }
 
@@ -1969,7 +1969,7 @@ html:not(.js) .strata {
 
 .hero-title {
     font-family: var(--serif);
-    font-size: clamp(3.2rem, 7.4vw, 6.4rem);
+    font-size: min(clamp(3.2rem, 7.4vw, 6.4rem), calc(var(--col, 9999px) / 5.6));
     font-weight: 500;
     line-height: 0.95;
     letter-spacing: -0.035em;
@@ -2014,11 +2014,8 @@ html.night .hero-sub p + p {
 }
 
 .hero-caption {
-    position: absolute;
-    right: 6vw;
-    bottom: 21vh;
-    max-width: 300px;
-    text-align: right;
+    margin-top: 26px;
+    max-width: 340px;
     line-height: 1.6;
 }
 

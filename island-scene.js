@@ -53,6 +53,7 @@
         mainW = narrow ? Math.min(w * (withProjects ? 0.6 : 0.78), h * (withProjects ? 0.3 : 0.34)) : Math.min(w * 0.46, h * 0.8, 680);
         mainX = narrow || !besideCopy ? w * 0.5 : w * 0.64;
         mainY = narrow ? h * (withProjects ? 0.17 : 0.2) : besideCopy ? h * 0.38 : h * 0.34;
+        alignToColumns(narrow);
         for (const p of PROJECTS) {
             const [fx, fy, size, depth, spin] = narrow ? p.m : p.d;
             p.depth = depth;
@@ -60,6 +61,26 @@
             p.bm = Terrain.bitmap(p.prep, mainW * size, dpr, { theta: spin, underside: 0.3, fragments: 5 });
         }
         frame(performance.now(), true);
+    }
+
+    // On wide screens the header shares the intro's two columns: name and bio sit above the
+    // portrait, the island above the "i like to think, explain, build." column.
+    function alignToColumns(narrow) {
+        const copy = document.querySelector('.hero-copy');
+        const port = document.querySelector('#intro .hero-portrait');
+        const col = document.querySelector('#intro .content');
+        if (!copy || !port || !col) return;
+        const stacked = narrow || w <= 900;
+        if (stacked) { copy.style.left = copy.style.width = ''; copy.style.removeProperty('--col'); return; }
+        const rP = port.getBoundingClientRect(), rC = col.getBoundingClientRect();
+        copy.style.left = rP.left + 'px';
+        copy.style.width = rP.width + 'px';
+        copy.style.setProperty('--col', rP.width + 'px');
+        mainW = Math.min(rC.width * 1.08, h * 0.62, 640);
+        mainX = rC.left + rC.width / 2;
+        // line the island's body up with the middle of the name and bio
+        const cy = copy.offsetTop + copy.offsetHeight / 2;
+        mainY = Math.max(70 + mainW * 0.32, cy - mainW * 0.12);
     }
 
     // ---------- drawing ----------
@@ -230,4 +251,5 @@
     addEventListener('resize', () => { clearTimeout(rt); rt = setTimeout(layout, 150); });
     layout();
     sync();
+    if (document.fonts && document.fonts.ready) document.fonts.ready.then(layout);
 })();
