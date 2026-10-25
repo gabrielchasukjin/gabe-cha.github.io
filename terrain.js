@@ -59,6 +59,8 @@ window.Terrain = (() => {
     const DEEP = ['#071c45', '#0f3f8f', '#2b7fd6', '#63c7f2', '#bff1ff'].map(hex);
     const GRANITE = hex('#b5ab9c'), GRANITE2 = hex('#ece4d4'), PINE = hex('#22402c'), PINE2 = hex('#355a35');
     const GRASS = hex('#9aa552'), GRASS2 = hex('#c9b765'), WATER = hex('#4f9fd4'), WATER2 = hex('#bfe6fa'), SUN = hex('#ffcf86');
+    const SAND = hex('#d6c493'), SAND2 = hex('#c2ad78'), STAIN = hex('#6d665c'), LICHEN = hex('#9aa06a'), SCREE2 = hex('#8f8676');
+    const PINE3 = hex('#163024'), MOSS2 = hex('#7e9446'), TREE = hex('#2c5a36'), TREE2 = hex('#183424');
 
     const faultV = u => 0.5 + 0.22 * Math.sin(u * 7.5 + 1) * (1 - u * 0.4);
     const riverV = u => 0.52 + 0.16 * Math.sin(u * 3.4 + 0.5);
@@ -146,14 +148,35 @@ window.Terrain = (() => {
                 const monolith = smooth(Math.min(1, dome * 2.2)) * 0.62;
                 return clamp01(0.05 + 0.64 * hills * Math.pow(open, 0.9) + monolith + 0.03 * (vnoise(u * 40, v * 40, s) - 0.5));
             },
+            cavity: 9, trees: true,
+            wallBands: ['#5d7a3a', '#4a3424', '#6e4f35', '#8c6a48', '#7d766b', '#5c4a3a'].map(hex),
             color: c => {
-                const d = c.v - riverV(c.u);
-                if (Math.abs(d) < 0.016 && c.h < 0.14) return mix(WATER, WATER2, clamp01(c.light * 0.9 + 0.2 * c.n));
+                const d = c.v - riverV(c.u), ad = Math.abs(d);
+                // river: brighter down the middle, a thin sandy bank on each side
+                if (ad < 0.016 && c.h < 0.14) return mix(mix(WATER, WATER2, clamp01(c.light * 0.8 + 0.15 * c.n)), [235, 248, 255], Math.pow(1 - ad / 0.016, 3) * 0.45);
+                if (ad < 0.026 && c.h < 0.16) return mix(SAND, SAND2, c.n);
+                const patch = fbm(c.u * 16, c.v * 16, 73, 3), fine = vnoise(c.u * 70, c.v * 70, 74);
                 let col;
-                if (c.h > 0.78) col = mix(GRANITE2, SNOW, 0.6);
-                else if (c.slope > 1.7 || c.h > 0.5 + 0.08 * c.n) col = mix(GRANITE, GRANITE2, clamp01(c.h * 0.8 + 0.2 * c.n));
-                else if (c.h > 0.12 + 0.05 * c.n) col = mix(PINE, PINE2, clamp01(c.n * 0.7 + c.h));
-                else col = mix(GRASS, GRASS2, c.n);
+                if (c.h > 0.66 && c.slope < 1.5 + 0.6 * patch) {
+                    col = mix(SNOWSH, SNOW, clamp01(c.light * 1.1 + 0.2 * fine));          // snowfields on the tops
+                } else if (c.slope > 1.7 || c.h > 0.5 + 0.08 * c.n) {
+                    // granite: vertical streaks and darker water stains, with a little lichen
+                    const streak = vnoise(c.u * 46 + c.v * 46, c.h * 6, 75);
+                    col = mix(GRANITE, GRANITE2, clamp01(c.h * 0.7 + 0.35 * streak - 0.1));
+                    if (streak < 0.28) col = mix(col, STAIN, 0.45);
+                    if (fine > 0.8) col = mix(col, LICHEN, 0.35);
+                } else if (c.h > 0.43 + 0.05 * c.n) {
+                    col = mix(SCREE2, GRANITE, clamp01(patch));                              // scree below the cliffs
+                } else if (c.h > 0.12 + 0.05 * c.n) {
+                    // forest: clumps of darker and lighter pines; trees get drawn on top
+                    col = mix(mix(PINE3, PINE, clamp01(patch * 1.4)), PINE2, clamp01(fine * 0.6 + c.h - 0.2));
+                    c.tree = 0.2 + 0.26 * patch;
+                } else {
+                    // meadow: patchy greens and golds, a few flowers
+                    col = mix(mix(GRASS, GRASS2, clamp01(patch * 1.3)), MOSS2, clamp01(0.5 - fine) * 0.5);
+                    if (c.n > 0.975) col = [[248, 240, 196], [246, 214, 222], [255, 255, 245]][Math.floor(fine * 3) % 3];
+                    else c.tree = 0.04;
+                }
                 return c.light > 0.78 ? mix(col, SUN, (c.light - 0.78) * 1.8) : col;
             },
         },
@@ -172,24 +195,37 @@ window.Terrain = (() => {
         const hAt = (i, j) => hs[Math.min(N, Math.max(0, j)) * M + Math.min(N, Math.max(0, i))];
         const k = def.relief * 9;
         const base = new Float32Array(N * N * 3), gx = new Float32Array(N * N), gy = new Float32Array(N * N);
+        const trees = new Map();        // cell -> tree size, for styles with trees
         for (let j = 0; j < N; j++) for (let i = 0; i < N; i++) {
             const h00 = hAt(i, j), h10 = hAt(i + 1, j), h01 = hAt(i, j + 1), h11 = hAt(i + 1, j + 1);
             const ax = (hAt(i + 2, j) - hAt(i - 1, j)) / 3 * N * k, ay = (hAt(i, j + 2) - hAt(i, j - 1)) / 3 * N * k;
             const lam = Math.max(0, (-ax * LIGHT[0] - ay * LIGHT[1] + LIGHT[2]) / Math.hypot(ax, ay, 1));
             const lo = Math.min(h00, h10, h01, h11), hi = Math.max(h00, h10, h01, h11);
-            const c = def.color({
+            const ctxCell = {
                 h: (h00 + h11) / 2, u: (i + 0.5) / N, v: (j + 0.5) / N, light: lam,
                 slope: Math.hypot(ax, ay) / Math.max(0.2, k), n: hash(i, j, s + 5),
                 contour: Math.floor(lo * 12) !== Math.floor(hi * 12),
-            });
+            };
+            const c = def.color(ctxCell);
             const q = j * N + i;
-            base[q * 3] = c[0]; base[q * 3 + 1] = c[1]; base[q * 3 + 2] = c[2];
+            const cell = { h: (h00 + h11) / 2 };
+            let col = c;
+            if (def.cavity) {
+                // fake ambient occlusion: hollows a little darker, ridges a little brighter
+                let sum = 0;
+                for (let dj = -2; dj <= 2; dj++) for (let di = -2; di <= 2; di++) sum += hAt(i + di, j + dj);
+                const cav = cell.h - sum / 25;
+                const f = Math.min(1.16, Math.max(0.72, 1 + cav * def.cavity));
+                col = [c[0] * f, c[1] * f, c[2] * f];
+            }
+            base[q * 3] = col[0]; base[q * 3 + 1] = col[1]; base[q * 3 + 2] = col[2];
             gx[q] = ax; gy[q] = ay;
+            if (def.trees && ctxCell.tree && hash(i, j, s + 91) < ctxCell.tree) trees.set(q, 0.6 + 0.8 * hash(j, i, s + 92));
         }
         // rough bottom edge, keyed to fixed perimeter positions so it holds still while turning
         const rough = new Float32Array(4 * M);
         for (let e = 0; e < 4; e++) for (let t = 0; t <= N; t++) rough[e * M + t] = 1 + 0.45 * (fbm(t / N * 4.6, 3.3 + e, s + 9, 3) - 0.5);
-        return { def, N, hs, hAt, base, gx, gy, rough, order: null, orderTheta: NaN };
+        return { def, N, hs, hAt, base, gx, gy, rough, trees, order: null, orderTheta: NaN };
     }
 
     // ---------- underside mesh ----------
@@ -329,6 +365,7 @@ window.Terrain = (() => {
             p.orderTheta = th;
         }
         const [s0, s1] = def.shade;
+        let treesDrawn = 0;
         for (const q of p.order) {
             const i = q % N, j = (q / N) | 0;
             const ax = gx[q] * cs - gy[q] * sn, ay = gx[q] * sn + gy[q] * cs;
@@ -339,6 +376,17 @@ window.Terrain = (() => {
                 P(gu(i), gu(j), hAt(i, j) * H), P(gu(i + 1), gu(j), hAt(i + 1, j) * H),
                 P(gu(i + 1), gu(j + 1), hAt(i + 1, j + 1) * H), P(gu(i), gu(j + 1), hAt(i, j + 1) * H),
             ], fill);
+            const tree = p.trees.get(q);
+            if (tree) {
+                // a small pine, drawn upright in screen space: a lit half and a shaded half
+                const [bx, by] = P(gu(i + 0.5), gu(j + 0.5), (hAt(i, j) + hAt(i + 1, j + 1)) / 2 * H);
+                const th = W * 0.023 * tree, tw = W * 0.0078 * tree;
+                g.beginPath(); g.moveTo(bx, by - th); g.lineTo(bx - tw, by); g.lineTo(bx, by + tw * 0.25); g.closePath();
+                g.fillStyle = rgb(TREE, k * 1.05); g.fill();
+                g.beginPath(); g.moveTo(bx, by - th); g.lineTo(bx + tw, by); g.lineTo(bx, by + tw * 0.25); g.closePath();
+                g.fillStyle = rgb(TREE2, k); g.fill();
+                treesDrawn++;
+            }
         }
 
         // rock walls with strata bands on the edges that face you
@@ -353,7 +401,15 @@ window.Terrain = (() => {
                 const surface = [base[q], base[q + 1], base[q + 2]];
                 for (let b = 0; b < 6; b++) {
                     const f0 = b / 6, f1 = (b + 1) / 6;
-                    const col = b === 0 ? mix(surface, wall, 0.55) : mix(wall, [255, 255, 255], 0.05 * ((b * 7 + ((t / 9) | 0)) % 3));
+                    let col;
+                    if (def.wallBands) {
+                        // layered cliff: a grassy lip, then soil, clay and rock bands that wander
+                        const wv = fbm(t / N * 7 + e.id * 3, b * 0.7, s + 61, 3);
+                        const band = Math.min(def.wallBands.length - 1, Math.max(0, Math.round(b + (wv - 0.5) * 1.6)));
+                        col = b === 0 ? mix(surface, def.wallBands[0], 0.35) : def.wallBands[band];
+                        if (b > 1 && hash(t, b, s + 62) > 0.9) col = mix(col, STONE2, 0.5);      // embedded stones
+                        if (b > 0 && b < 3 && hash(t, b + 9, s + 63) > 0.93) col = mix(col, ROOT, 0.6);
+                    } else col = b === 0 ? mix(surface, wall, 0.55) : mix(wall, [255, 255, 255], 0.05 * ((b * 7 + ((t / 9) | 0)) % 3));
                     poly([
                         P(gu(i0), gu(j0), za + (ba - za) * f0), P(gu(i1), gu(j1), zb + (bb - zb) * f0),
                         P(gu(i1), gu(j1), zb + (bb - zb) * f1), P(gu(i0), gu(j0), za + (ba - za) * f1),
@@ -378,7 +434,7 @@ window.Terrain = (() => {
             poly([P(u + r, v - r, z + hgt), P(u + r, v + r, z + hgt), P(u + r, v + r, z), P(u + r, v - r, z)], rgb(wall, 0.65));
             poly([P(u - r, v - r, z + hgt), P(u + r, v - r, z + hgt), P(u + r, v + r, z + hgt), P(u - r, v + r, z + hgt)], rgb(surf, 0.95));
         }
-        polys += N * N + front.length * N * 6 + frags * 3;
+        polys += N * N + front.length * N * 6 + frags * 3 + treesDrawn * 2;
         return { P, H, T, polys };
     }
 

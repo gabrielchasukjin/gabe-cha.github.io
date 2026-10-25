@@ -18,7 +18,7 @@
 
     // ---------- the islands ----------
     const narrowAtLoad = innerWidth < 700;
-    const MAIN_N = narrowAtLoad ? 46 : 56;
+    const MAIN_N = narrowAtLoad ? 48 : 62;
     const main = Terrain.prepare('valley', MAIN_N);
 
     // x, y: center as a fraction of the viewport; size: width relative to the big island;
