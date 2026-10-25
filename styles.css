@@ -2249,30 +2249,6 @@ html.night .sd-media {
     text-decoration-color: currentColor;
 }
 
-.strata-close {
-    position: absolute;
-    top: 10px;
-    right: 12px;
-    width: 34px;
-    height: 34px;
-    border: none;
-    border-radius: 50%;
-    background: var(--bg-soft);
-    color: var(--ink-strong);
-    font-size: 1.3rem;
-    line-height: 1;
-    cursor: pointer;
-}
-
-.strata-close:hover {
-    background: var(--rule);
-}
-
-.strata-close:focus-visible {
-    outline: 2px solid var(--accent);
-    outline-offset: 2px;
-}
-
 .sd-veil {
     position: absolute;
     inset: -1px;
@@ -2282,7 +2258,7 @@ html.night .sd-media {
 }
 
 html.night .strata-detail .sd-media {
-    background: #121833;
+    background: transparent;
 }
 
 @media (max-width: 640px) {
@@ -2314,11 +2290,22 @@ html.night .strata-detail .sd-media {
     mask-composite: intersect;
 }
 
-html.night .strata-close {
-    background: rgba(255, 255, 255, 0.08);
-    color: var(--ink-strong);
+
+.strata-detail:focus {
+    outline: none;
 }
 
-html.night .strata-close:hover {
-    background: rgba(255, 255, 255, 0.16);
+/* dark mode: the ghost is a frosted mist that softly blurs the stack behind it,
+   instead of a flat navy block */
+html.night .sd-cloud {
+    background: var(--bg);
+    filter: none;
+    inset: -110px -90px;
+    -webkit-mask-image: radial-gradient(closest-side, #000 58%, rgba(0, 0, 0, 0.6) 76%, transparent 100%);
+    mask-image: radial-gradient(closest-side, #000 58%, rgba(0, 0, 0, 0.6) 76%, transparent 100%);
 }
+
+html.night .strata-detail.sd-show .sd-cloud {
+    opacity: 0.94;
+}
+

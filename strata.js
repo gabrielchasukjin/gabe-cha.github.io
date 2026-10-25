@@ -53,8 +53,9 @@
     panel.hidden = true;
     panel.setAttribute('role', 'region');
     panel.setAttribute('aria-live', 'polite');
+    panel.setAttribute('aria-label', 'Project details. Click outside or press Escape to go back.');
+    panel.tabIndex = -1;
     panel.innerHTML = `
-        <button class="strata-close" type="button" aria-label="Back to the stack">×</button>
         <div class="sd-media"><img alt=""></div>
         <div class="sd-body">
             <p class="sd-meta"></p>
@@ -174,14 +175,16 @@
     function draw(now) {
         ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
         ctx.clearRect(0, 0, cssW, cssH);
-        const lineX = labelX - 10, ink = getComputedStyle(root).color;
+        const lineX = labelX - 10, ink = getComputedStyle(root).color, night = docEl.classList.contains('night');
         // bottom slab first: the ones above sit nearer the eye
         for (let k = slabs.length - 1; k >= 0; k--) {
             const s = slabs[k], y = centerY(k, now), st = state[k];
             const dim = open < 0 && hovered >= 0 && hovered !== k;
             ctx.globalAlpha = (dim ? 0.38 : 1) * (1 - 0.72 * st.fade);
             // the rest of the stack greys out and softens behind the open panel
-            if (st.fade > 0.01) ctx.filter = `grayscale(${st.fade.toFixed(2)}) blur(${(st.fade * 2.2).toFixed(1)}px)`;
+            if (st.fade > 0.01) ctx.filter = night
+                ? `saturate(${(1 - 0.7 * st.fade).toFixed(2)}) brightness(${(1 - 0.35 * st.fade).toFixed(2)}) blur(${(st.fade * 3).toFixed(1)}px)`
+                : `grayscale(${st.fade.toFixed(2)}) blur(${(st.fade * 2.2).toFixed(1)}px)`;
             drawSlab(s, k, y);
             ctx.filter = 'none';
             // leader line from the slab's right corner to its label
@@ -265,7 +268,7 @@
             anim = { k, dir: 1, t0: performance.now() };
         }
         canvas.style.cursor = '';
-        $('.strata-close').focus({ preventScroll: true });
+        panel.focus({ preventScroll: true });
         kick();
     }
 
@@ -324,20 +327,21 @@
     });
     canvas.addEventListener('pointerleave', () => setHover(-1));
     canvas.addEventListener('click', e => {
-        if (open >= 0) { closeSlab(); return; }          // a click outside the panel closes it
+        if (open >= 0) return;                            // the document handler below closes it
         const r = canvas.getBoundingClientRect();
         const k = slabAt(e.clientX - r.left, e.clientY - r.top);
-        if (k >= 0) openSlab(k);
+        if (k >= 0) { e.stopPropagation(); openSlab(k); }
     });
     labels.forEach((li, k) => {
         const a = li.querySelector('a');
-        a.addEventListener('click', e => { e.preventDefault(); openSlab(k); });
+        a.addEventListener('click', e => { e.preventDefault(); if (open < 0) { e.stopPropagation(); openSlab(k); } });
         a.addEventListener('pointerenter', () => setHover(k));
         a.addEventListener('pointerleave', () => setHover(-1));
         a.addEventListener('focus', () => setHover(k));
         a.addEventListener('blur', () => setHover(-1));
     });
-    $('.strata-close').addEventListener('click', closeSlab);
+    // a click anywhere outside the panel takes you back to the stack
+    document.addEventListener('click', e => { if (open >= 0 && !panel.contains(e.target)) closeSlab(); });
     document.addEventListener('keydown', e => { if (e.key === 'Escape' && open >= 0) closeSlab(); });
 
     new IntersectionObserver(([e]) => {
