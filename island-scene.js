@@ -23,7 +23,7 @@
     // x, y: center as a fraction of the viewport; size: width relative to the big island;
     // depth: parallax strength, and whether it floats behind (< 0.6) or in front
     const PROJECTS = !withProjects ? [] : [
-        { style: 'range',         idx: '01', name: 'ContentGen',                href: '#work-01', d: [0.28, 0.12, 0.28, 0.45, 0.4],  m: [0.13, 0.11, 0.26, 0.45, 0.4] },
+        { style: 'range',         idx: '01', name: 'SIGCSE 2026 paper',                href: '#work-01', d: [0.28, 0.12, 0.28, 0.45, 0.4],  m: [0.13, 0.11, 0.26, 0.45, 0.4] },
         { style: 'interferogram', idx: '02', name: 'Cloi',                      href: '#work-02', d: [0.87, 0.19, 0.32, 0.4, -0.5], m: [0.87, 0.15, 0.28, 0.4, -0.5] },
         { style: 'alpine',        idx: '03', name: 'Speech emotion recognition', href: '#work-03', d: [0.9, 0.47, 0.34, 0.55, 0.9], m: [0.1, 0.25, 0.2, 0.55, 0.9] },
         { style: 'mineral',       idx: '04', name: 'DSC 80: Loan Applications', href: '#work-04', d: [0.47, 0.8, 0.26, 0.85, -0.3], m: [0.9, 0.27, 0.2, 0.85, -0.3] },
